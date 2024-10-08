@@ -6,6 +6,7 @@ import { sql } from '@vercel/postgres';
 import type { User } from '@/app/lib/definitions';
 import bcrypt from 'bcrypt';
 import Google from 'next-auth/providers/google';
+import Facebook from 'next-auth/providers/facebook';
 
 async function getUser(email: string): Promise<User | undefined> {
     try {
@@ -20,6 +21,7 @@ async function getUser(email: string): Promise<User | undefined> {
 export const { handlers, auth, signIn, signOut } = NextAuth({
     ...authConfig,
     providers: [
+        Facebook,
         Google,
         Credentials({
             async authorize(credentials) {

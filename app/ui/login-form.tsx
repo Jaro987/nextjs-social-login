@@ -8,7 +8,8 @@ import { ArrowRightIcon, ExclamationCircleIcon } from '@heroicons/react/20/solid
 import { Button } from './button';
 import { useActionState } from 'react';
 import { authenticate } from '../lib/actions';
-import SignIn from '@/components/sign-in';
+import GoogleSignIn from '@/components/google/sign-in';
+import FacebookSignIn from '@/components/facebook/sign-in';
 
 export default function LoginForm() {
   const [errorMessage, formAction, isPending] = useActionState(
@@ -80,7 +81,8 @@ export default function LoginForm() {
           </div>
         </div>
       </form>
-      <SignIn />
+      <GoogleSignIn />
+      <FacebookSignIn />
     </>
   );
 }
