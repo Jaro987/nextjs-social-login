@@ -137,3 +137,37 @@ export async function deleteInvoice(id: string) {
         return { message: 'Database Error: Failed to Delete Invoice.' };
     }
 }
+
+
+const UserSchema = z.object({
+    name: z.string(),
+    email: z.string().email(),
+    image: z.string(),
+});
+
+export async function createUser(formData: FormData) {
+    const validatedFields = UserSchema.safeParse({
+        name: formData.get('name'),
+        email: formData.get('email'),
+        image: formData.get('image'),
+    });
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: 'Missing Fields. Failed to Create User.',
+        };
+    }
+
+    const { name, email, image } = validatedFields.data;
+    try {
+        await sql`
+        INSERT INTO users (name, email, password)
+        VALUES (${name}, ${email}, 'default')
+      `;
+    } catch (error) {
+        return {
+            message: 'Database Error: Failed to Create User.',
+        };
+    }
+}

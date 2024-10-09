@@ -7,8 +7,9 @@ import type { User } from '@/app/lib/definitions';
 import bcrypt from 'bcrypt';
 import Google from 'next-auth/providers/google';
 import Facebook from 'next-auth/providers/facebook';
+import { createUser } from './app/lib/actions';
 
-async function getUser(email: string): Promise<User | undefined> {
+export async function getUser(email: string): Promise<User | undefined> {
     try {
         const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
         return user.rows[0];
@@ -18,11 +19,47 @@ async function getUser(email: string): Promise<User | undefined> {
     }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function createUserIfNotExists(profile: any) {
+    const user = await getUser(profile.email);
+
+    if (!user) {
+        const userData = new FormData();
+        userData.append('name', profile.name);
+        userData.append('email', profile.email);
+        userData.append('image', profile.picture.data.url);
+        console.log('userData', userData);
+
+        await createUser(userData);
+
+    }
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
     ...authConfig,
     providers: [
-        Facebook,
-        Google,
+        Facebook({
+            async profile(profile) {
+                await createUserIfNotExists(profile);
+                return {
+                    name: profile.name,
+                    email: profile.email,
+                    image: profile.picture.data.url,
+                };
+            }
+        }),
+        Google({
+            async profile(profile) {
+                await createUserIfNotExists(profile);
+                console.log('profile', profile);
+
+                return {
+                    name: profile.name,
+                    email: profile.email,
+                    image: profile.picture
+                };
+            }
+        }),
         Credentials({
             async authorize(credentials) {
                 const parsedCredentials = z
