@@ -116,3 +116,9 @@ export async function GET() {
     return Response.json({ error }, { status: 500 });
   }
 }
+
+// for adding image url to users: 
+// ALTER TABLE users
+// ADD COLUMN image_url VARCHAR(255);
+// UPDATE users
+// SET image_url = md5(random()::text) || '.jpg';

@@ -161,9 +161,9 @@ export async function createUser(formData: FormData) {
 
     const { name, email, image } = validatedFields.data;
     try {
-        await sql`
-        INSERT INTO users (name, email, password)
-        VALUES (${name}, ${email}, 'default')
+        return await sql`
+        INSERT INTO users (name, email, password, image_url)
+        VALUES (${name}, ${email}, 'default', ${image})
       `;
     } catch (error) {
         return {

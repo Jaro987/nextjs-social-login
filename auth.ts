@@ -2,12 +2,14 @@ import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { authConfig } from './auth.config';
 import { z } from 'zod';
-import { sql } from '@vercel/postgres';
+import { QueryResultRow, sql } from '@vercel/postgres';
 import type { User } from '@/app/lib/definitions';
 import bcrypt from 'bcrypt';
 import Google from 'next-auth/providers/google';
 import Facebook from 'next-auth/providers/facebook';
 import { createUser } from './app/lib/actions';
+// import { toast } from "sonner"
+
 
 export async function getUser(email: string): Promise<User | undefined> {
     try {
@@ -22,7 +24,6 @@ export async function getUser(email: string): Promise<User | undefined> {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function createUserIfNotExists(profile: any) {
     const user = await getUser(profile.email);
-
     if (!user) {
         const userData = new FormData();
         userData.append('name', profile.name);
@@ -30,10 +31,20 @@ async function createUserIfNotExists(profile: any) {
         userData.append('image', profile.picture.data.url);
         console.log('userData', userData);
 
-        await createUser(userData);
+        const result = await createUser(userData);
+        // console.log('createdUser', result);
+        return (result as QueryResultRow).rowCount > 0 ? 'created' : 'existed';
 
     }
 }
+// function showToast(user: string | undefined) {
+//     'use client'
+//     if (user === 'existed') {
+//         toast.info('Successfully logged in!');
+//     } else if (user === 'created') {
+//         toast.success('Successfully created account!');
+//     }
+// }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     ...authConfig,
@@ -41,6 +52,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         Facebook({
             async profile(profile) {
                 await createUserIfNotExists(profile);
+                // const user = await createUserIfNotExists(profile);
+                // showToast(user);
+
                 return {
                     name: profile.name,
                     email: profile.email,
