@@ -8,7 +8,6 @@ import bcrypt from 'bcrypt';
 import Google from 'next-auth/providers/google';
 import Facebook from 'next-auth/providers/facebook';
 import { createUser } from './app/lib/actions';
-// import { toast } from "sonner"
 
 
 export async function getUser(email: string): Promise<User | undefined> {
@@ -29,10 +28,9 @@ async function createUserIfNotExists(profile: any) {
         userData.append('name', profile.name);
         userData.append('email', profile.email);
         userData.append('image', profile.picture.data.url);
-        console.log('userData', userData);
+        userData.append('password', profile.password);
 
         const result = await createUser(userData);
-        // console.log('createdUser', result);
         return (result as QueryResultRow).rowCount > 0 ? 'created' : 'existed';
 
     }
@@ -51,7 +49,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     providers: [
         Facebook({
             async profile(profile) {
-                await createUserIfNotExists(profile);
+                await createUserIfNotExists({ ...profile, password: 'facebook' });
                 // const user = await createUserIfNotExists(profile);
                 // showToast(user);
 
@@ -64,8 +62,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }),
         Google({
             async profile(profile) {
-                await createUserIfNotExists(profile);
-                console.log('profile', profile);
+                await createUserIfNotExists({ ...profile, password: 'google' });
 
                 return {
                     name: profile.name,

@@ -143,6 +143,7 @@ const UserSchema = z.object({
     name: z.string(),
     email: z.string().email(),
     image: z.string(),
+    password: z.string(),
 });
 
 export async function createUser(formData: FormData) {
@@ -159,11 +160,11 @@ export async function createUser(formData: FormData) {
         };
     }
 
-    const { name, email, image } = validatedFields.data;
+    const { name, email, image, password } = validatedFields.data;
     try {
         return await sql`
         INSERT INTO users (name, email, password, image_url)
-        VALUES (${name}, ${email}, 'default', ${image})
+        VALUES (${name}, ${email}, ${password}, ${image})
       `;
     } catch (error) {
         return {

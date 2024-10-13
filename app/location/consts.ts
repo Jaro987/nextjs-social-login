@@ -1,0 +1,1 @@
+export const mapTilerApiKey = "c3MXxkl0XvVEPjXDfnNI";
