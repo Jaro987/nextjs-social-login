@@ -4,7 +4,7 @@
 import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { z } from 'zod';
+import { date, z } from 'zod';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 
@@ -171,4 +171,38 @@ export async function createUser(formData: FormData) {
             message: 'Database Error: Failed to Create User.',
         };
     }
+}
+
+const EventSchema = z.object({
+    user_id: z.string(),
+    date: z.string().datetime(),
+});
+
+export async function createEvent(formData: FormData) {
+    const validatedFields = EventSchema.safeParse({
+        user_id: formData.get('user_id'),
+        date: formData.get('date'),
+    });
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: 'Missing Fields. Failed to Create Event.',
+        };
+    }
+    const { user_id, date } = validatedFields.data;
+    console.log({ user_id, date });
+
+    try {
+        await sql`
+        INSERT INTO calendar_events (date, user_id)
+        VALUES (${date}, ${user_id})
+      `;
+    } catch (error) {
+        return {
+            message: 'Database Error: Failed to Create User.',
+        };
+    }
+    revalidatePath('/book');
+
 }

@@ -1,4 +1,3 @@
-import dynamic from 'next/dynamic';
 import {
     Card,
     CardContent,
@@ -6,15 +5,16 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { EnvelopeIcon, MapPinIcon, PhoneIcon } from '@heroicons/react/24/outline';
+import { Metadata } from 'next';
+import MapDynamic from './map-dynamic';
 
-
-const Map = dynamic(() => import('./map'), {
-    ssr: false,
-});
+export const metadata: Metadata = {
+    title: 'Contact us',
+};
 
 export default function Page() {
     return (
-        <main className='h-screen w-full flex justify-center'>
+        <div className='h-screen w-full flex justify-center'>
             <Card className='flex flex-col rounded-lg bg-black/50 px-6 pb-4 pt-8 gap-4 border-0 text-white h-min w-3/4 xl:w-min'>
                 <CardHeader>
                     <CardTitle>Contact</CardTitle>
@@ -22,7 +22,7 @@ export default function Page() {
                 <CardContent>
                     <div className='flex flex-col xl:flex-row gap-12'>
                         <div className='flex justify-center'>
-                            <Map />
+                            <MapDynamic />
                         </div>
                         <div className='flex flex-col gap-6'>
                             <div>
@@ -50,6 +50,6 @@ export default function Page() {
                     </div>
                 </CardContent>
             </Card>
-        </main>
+        </div>
     )
 }

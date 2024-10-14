@@ -86,3 +86,22 @@ export type InvoiceForm = {
   amount: number;
   status: 'pending' | 'paid';
 };
+
+export type CalendarUser = {
+  id: string;
+  name: string;
+  email: string;
+  image_url: string;
+  color: string;
+  events: CalendarEvent[];
+}
+
+export type CalendarEvent = {
+  event_id: string;
+  date: string;
+  user_id: string;
+  name: string;
+  email: string;
+  color: string;
+  image_url: string;
+}

@@ -1,5 +1,6 @@
 import { sql } from '@vercel/postgres';
 import {
+  CalendarEvent,
   CustomerField,
   CustomersTableType,
   InvoiceForm,
@@ -213,5 +214,28 @@ export async function fetchFilteredCustomers(query: string) {
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch customer table.');
+  }
+}
+
+export async function fetchAllCalendarEvents() {
+  try {
+    const data = await sql<CalendarEvent>`
+      SELECT 
+        ce.id AS event_id, 
+        ce.date, 
+        u.id AS user_id, 
+        u.name, 
+        u.email, 
+        u.color,
+      u.image_url
+      FROM calendar_events ce
+      JOIN users u ON ce.user_id = u.id;
+    `;
+
+    const events = data.rows;
+    return events;
+  } catch (err) {
+    console.error('Database Error:', err);
+    throw new Error('Failed to fetch all events.');
   }
 }

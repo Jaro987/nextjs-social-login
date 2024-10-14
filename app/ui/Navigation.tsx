@@ -35,9 +35,9 @@ export default function Navigation({ color }: { color: string }) {
                     </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                    <Link href="/location" legacyBehavior passHref>
-                        <NavigationMenuLink className={navigationMenuTriggerStyle("/location")}>
-                            Location
+                    <Link href="/contact-us" legacyBehavior passHref>
+                        <NavigationMenuLink className={navigationMenuTriggerStyle("/contact-us")}>
+                            Contact us
                         </NavigationMenuLink>
                     </Link>
                 </NavigationMenuItem>

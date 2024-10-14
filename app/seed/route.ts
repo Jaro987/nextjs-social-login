@@ -117,8 +117,31 @@ export async function GET() {
   }
 }
 
-// for adding image url to users: 
+// async function seedCalendarEvents() {
+//   await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+
+//   await client.sql`
+//     CREATE TABLE IF NOT EXISTS calendar_events (
+//       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+//       date DATE NOT NULL,
+//       user_id UUID NOT NULL,
+//       CONSTRAINT fk_user
+//         FOREIGN KEY(user_id)
+//         REFERENCES users(id)
+//         ON DELETE CASCADE
+//     );
+//   `;
+
+//   // You can insert calendar events here, similar to other seeding functions
+// }
+
+
+// for adding image url to users:
 // ALTER TABLE users
 // ADD COLUMN image_url VARCHAR(255);
 // UPDATE users
 // SET image_url = md5(random()::text) || '.jpg';
+
+// for adding color to users:
+// ALTER TABLE users
+// ADD COLUMN color VARCHAR(255);
