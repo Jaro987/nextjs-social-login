@@ -7,6 +7,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@fullcalendar/core": "^6.1.15",
+    "@fullcalendar/daygrid": "^6.1.15",
+    "@fullcalendar/interaction": "^6.1.15",
+    "@fullcalendar/react": "^6.1.15",
     "@heroicons/react": "^2.1.4",
     "@maptiler/leaflet-maptilersdk": "^2.0.0",
     "@radix-ui/react-navigation-menu": "^1.2.1",
