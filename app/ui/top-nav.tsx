@@ -40,7 +40,7 @@ export async function TopNav() {
                         >
                             <button className="flex items-center text-sm font-medium leading-tight tracking-tight">
                                 {/* <PowerIcon className="w-6" /> */}
-                                <div className="hidden md:block">Sign Out</div>
+                                <div>Sign Out</div>
                             </button>
                         </form>
                     </div>
@@ -50,7 +50,7 @@ export async function TopNav() {
                     className="flex items-center text-sm font-medium leading-tight tracking-tight"
                 >
                     <UserCircleIcon stroke={color} className="w-6" />
-                    <p className="hidden md:block">Login</p>
+                    <p>Login</p>
                 </Link>
                 // <div className="">
                 //     <UserCircleIcon stroke={color} className="w-6" />

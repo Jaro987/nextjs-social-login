@@ -27,13 +27,13 @@ export default async function Page() {
         })
     }
 
-    const addEvent = async (date: Date) => {
+    const addEvent = async (date: string) => {
         'use server'
         const user = await getUser(session?.user?.email as string);
         const eventData = new FormData();
-        const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
+        // const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
         eventData.append('user_id', user?.id as string);
-        eventData.append('date', utcDate.toISOString());
+        eventData.append('date', date);
         await createEvent(eventData);
 
     }

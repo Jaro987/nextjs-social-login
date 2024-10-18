@@ -175,7 +175,7 @@ export async function createUser(formData: FormData) {
 
 const EventSchema = z.object({
     user_id: z.string(),
-    date: z.string().datetime(),
+    date: z.string(),
 });
 
 export async function createEvent(formData: FormData) {

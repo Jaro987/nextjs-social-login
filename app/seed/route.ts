@@ -120,17 +120,17 @@ export async function GET() {
 // async function seedCalendarEvents() {
 //   await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
 
-//   await client.sql`
-//     CREATE TABLE IF NOT EXISTS calendar_events (
-//       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-//       date DATE NOT NULL,
-//       user_id UUID NOT NULL,
-//       CONSTRAINT fk_user
-//         FOREIGN KEY(user_id)
-//         REFERENCES users(id)
-//         ON DELETE CASCADE
-//     );
-//   `;
+// await client.sql`
+//   CREATE TABLE IF NOT EXISTS calendar_events (
+//     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+//     date VARCHAR(255) NOT NULL,
+//     user_id UUID NOT NULL,
+//     CONSTRAINT fk_user
+//       FOREIGN KEY(user_id)
+//       REFERENCES users(id)
+//       ON DELETE CASCADE
+//   );
+// `;
 
 //   // You can insert calendar events here, similar to other seeding functions
 // }

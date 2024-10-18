@@ -44,10 +44,13 @@ const Map = () => {
     }, [center.lng, center.lat, zoom]);
 
     return (
-        <div className={'relative w-[450px] xl:w-[600px] h-[300px] xl:h-[400px]'}>
-            <div ref={mapContainer} className={'absolute w-[450px] xl:w-[600px] h-[300px] xl:h-[400px]'} />
+        <div className={'relative w-[450px] h-[300px] xl:w-[600px] xl:h-[400px]'}>
+            <div ref={mapContainer} className={'absolute w-[450px] h-[300px] xl:w-[600px] xl:h-[400px]'} />
         </div>
     )
 }
 
 export default Map;
+
+
+//https://www.youtube.com/watch?v=Rs8018RO5YQ

@@ -5,10 +5,18 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from "@fullcalendar/interaction"
 import Image from 'next/image'
 
-const Calendar = ({ events = [], addEvent }: { events: { title: string; date: string; backgroundColor: string; borderColor: string; image_url: string; }[], addEvent: (date: Date) => void }) => {
+type Props = {
+    events: { title: string; date: string; backgroundColor: string; borderColor: string; image_url: string; }[],
+    addEvent: (date: string) => void
+}
+
+const Calendar = ({ events = [], addEvent }: Props) => {
 
     const handleDateClick = (arg: { date: Date }) => {
-        addEvent(arg.date)
+        const formattedDate = arg.date.toISOString().split('T')[0];
+        console.log(formattedDate)
+        console.log(new Date(formattedDate))
+        addEvent(formattedDate);
     }
     const handleEventClick = (event: { event: { title: string, extendedProps: { [key: string]: string } } }) => {
         alert(event.event.title)
@@ -42,7 +50,7 @@ const Calendar = ({ events = [], addEvent }: { events: { title: string; date: st
             dayCellClassNames={'h-[162px] mb-0'}
             firstDay={1}
             eventClassNames={'h-[90px] mb-0'}
-
+            timeZone='UTC'
         />
     )
 }
