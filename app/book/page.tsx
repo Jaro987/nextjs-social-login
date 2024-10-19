@@ -31,16 +31,16 @@ export default async function Page() {
         'use server'
         const user = await getUser(session?.user?.email as string);
         const eventData = new FormData();
-        // const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
         eventData.append('user_id', user?.id as string);
         eventData.append('date', date);
-        await createEvent(eventData);
+        const e = await createEvent(eventData);
+        return e;
 
     }
 
     return (
         <Suspense fallback={'Loading...'}>
-            <Card className="flex h-full w-full p-4 xl:w-4/5 2xl:w-3/4 m-auto items-center justify-center text-2xl text-white bg-black/50 rounded-lg border-0">
+            <Card className="flex h-full w-full pt-4 xl:w-4/5 2xl:w-3/4 m-auto items-center justify-center text-[10px] md:text-2xl text-white bg-black/50 rounded-lg border-0">
                 <CardContent>
                     <Calendar events={formatEvents(events)} addEvent={addEvent} />
                 </CardContent>

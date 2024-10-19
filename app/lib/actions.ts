@@ -179,6 +179,7 @@ const EventSchema = z.object({
 });
 
 export async function createEvent(formData: FormData) {
+    let response;
     const validatedFields = EventSchema.safeParse({
         user_id: formData.get('user_id'),
         date: formData.get('date'),
@@ -191,10 +192,9 @@ export async function createEvent(formData: FormData) {
         };
     }
     const { user_id, date } = validatedFields.data;
-    console.log({ user_id, date });
 
     try {
-        await sql`
+        response = await sql`
         INSERT INTO calendar_events (date, user_id)
         VALUES (${date}, ${user_id})
       `;
@@ -204,5 +204,6 @@ export async function createEvent(formData: FormData) {
         };
     }
     revalidatePath('/book');
+    return response.rowCount > 0;
 
 }
