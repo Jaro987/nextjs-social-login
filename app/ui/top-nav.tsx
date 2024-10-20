@@ -1,10 +1,10 @@
 import * as React from "react"
-
 import Navigation from "./Navigation"
-import { Bars3Icon, UserCircleIcon } from "@heroicons/react/24/outline"
+import { UserCircleIcon } from "@heroicons/react/24/outline"
 import { auth, signOut } from "@/auth";
 import Image from "next/image";
 import Link from "next/link";
+import MobileMenu from "./MobileMenu";
 
 
 
@@ -15,7 +15,7 @@ export async function TopNav() {
     return (
         <div className="flex flex-row items-center justify-between w-full text-[#fff]">
             <Navigation color={color} />
-            <Bars3Icon className="block md:hidden w-12" />
+            <MobileMenu color={color} />
             {session?.user ?
                 <div className="flex items-center">
                     <Image

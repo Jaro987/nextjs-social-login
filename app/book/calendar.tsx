@@ -51,11 +51,10 @@ const Calendar = ({ events = [], addEvent }: Props) => {
         return (
             <div className={`
                 text-center md:text-left md:items-left pt-1 md:p-2
-                ${new Date(event.extendedProps.date) < new Date() ? 'bg-red bg-opacity-50' : ''}
             `}>
                 <Image
                     src={event.extendedProps.image_url}
-                    className="mx-auto rounded-full"
+                    className="mx-auto rounded-full border-2 border-gray-300"
                     width={28}
                     height={28}
                     alt={`${event.title}'s profile picture`}
