@@ -187,6 +187,7 @@ export async function createEvent(formData: FormData) {
 
     if (!validatedFields.success) {
         return {
+            success: false,
             errors: validatedFields.error.flatten().fieldErrors,
             message: 'Missing Fields. Failed to Create Event.',
         };
@@ -194,16 +195,31 @@ export async function createEvent(formData: FormData) {
     const { user_id, date } = validatedFields.data;
 
     try {
+        const existingEvent = await sql`
+                SELECT * FROM calendar_events
+                WHERE date = ${date}
+            `;
+
+        if (existingEvent.rowCount > 0) {
+            return {
+                success: false,
+                message: 'This date is already booked.',
+            };
+        }
         response = await sql`
         INSERT INTO calendar_events (date, user_id)
         VALUES (${date}, ${user_id})
       `;
     } catch (error) {
         return {
-            message: 'Database Error: Failed to Create User.',
+            success: false,
+            message: 'Database Error: Failed to Create Event.',
         };
     }
     revalidatePath('/book');
-    return response.rowCount > 0;
+    return {
+        success: true,
+        message: 'Successfully created event!',
+    };
 
 }

@@ -11,8 +11,21 @@ import {
 import { toast } from "sonner";
 
 type Props = {
-    open: boolean; setOpen: (open: boolean) => void; date: string; addEvent: (date: string) => Promise<boolean | { errors: { user_id?: string[] | undefined; date?: string[] | undefined; }; message: string; } | { message: string; errors?: undefined; }>
-
+    open: boolean;
+    setOpen: (open: boolean) => void;
+    date: string;
+    addEvent: (date: string) => Promise<{
+        success: boolean;
+        errors: {
+            date?: string[] | undefined;
+            user_id?: string[] | undefined;
+        };
+        message: string;
+    } | {
+        success: boolean;
+        message: string;
+        errors?: undefined;
+    }>
 }
 
 export default function ConfirmCreateEvent({ open, setOpen, date, addEvent }: Props) {
@@ -31,8 +44,10 @@ export default function ConfirmCreateEvent({ open, setOpen, date, addEvent }: Pr
         const r = await addEvent(date);
         setOpen(false);
 
-        if (r) {
-            toast.success('Successfully created event!');
+        if (r.success) {
+            toast.success(r.message);
+        } else {
+            toast.error(r.message);
         }
     }
     return (

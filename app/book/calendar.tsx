@@ -11,7 +11,18 @@ import { LockClosedIcon } from '@heroicons/react/24/outline';
 
 interface Props {
     events: { title: string; date: string; backgroundColor: string; borderColor: string; image_url: string; }[]
-    addEvent: (date: string) => Promise<boolean | { errors: { user_id?: string[] | undefined; date?: string[] | undefined; }; message: string; } | { message: string; errors?: undefined; }>
+    addEvent: (date: string) => Promise<{
+        success: boolean;
+        errors: {
+            date?: string[] | undefined;
+            user_id?: string[] | undefined;
+        };
+        message: string;
+    } | {
+        success: boolean;
+        message: string;
+        errors?: undefined;
+    }>
 }
 
 const Calendar = ({ events = [], addEvent }: Props) => {
