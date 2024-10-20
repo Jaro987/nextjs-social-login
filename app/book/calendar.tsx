@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 import ConfirmCreateEvent from './confirm-create-event'
 import { toast } from 'sonner'
+import { LockClosedIcon } from '@heroicons/react/24/outline';
 
 interface Props {
     events: { title: string; date: string; backgroundColor: string; borderColor: string; image_url: string; }[]
@@ -48,9 +49,10 @@ const Calendar = ({ events = [], addEvent }: Props) => {
     }
 
     const renderEventContent = ({ event }: { event: { title: string, extendedProps: { [key: string]: string } } }) => {
-        return (
+
+        return event.extendedProps.myEvent ? (
             <div className={`
-                text-center md:text-left md:items-left pt-1 md:p-2
+                text-center pt-1 md:p-2
             `}>
                 <Image
                     src={event.extendedProps.image_url}
@@ -59,7 +61,14 @@ const Calendar = ({ events = [], addEvent }: Props) => {
                     height={28}
                     alt={`${event.title}'s profile picture`}
                 />
-                <p className='text-[10px] md:text-md whitespace-pre-line truncate'>{event.title}</p>
+                <p className='text-[10px] md:text-base whitespace-pre-line truncate'>{event.title}</p>
+            </div>
+        ) : (
+            <div className={`
+                text-center pt-1 md:p-2
+            `}>
+                <LockClosedIcon className='w-8 mx-auto' />
+                <p className='text-[10px] md:text-base whitespace-pre-line truncate'>taken</p>
             </div>
         )
     }

@@ -20,9 +20,10 @@ export default async function Page() {
             return {
                 title: e.name,
                 date: e.date,
-                backgroundColor: e.color + '60',
-                borderColor: e.color + '80',
-                image_url: e.image_url
+                backgroundColor: e.email === session?.user?.email ? e.color + '60' : '#87878760',
+                borderColor: e.email === session?.user?.email ? e.color + '80' : '#87878760',
+                image_url: e.image_url,
+                myEvent: e.email === session?.user?.email
             }
         })
     }
