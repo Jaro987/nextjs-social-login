@@ -8,9 +8,11 @@ import { useState } from 'react'
 import ConfirmCreateEvent from './confirm-create-event'
 import { toast } from 'sonner'
 import { LockClosedIcon } from '@heroicons/react/24/outline';
+import EventDetails from './EventDetails'
+import { CalendarEvent } from '../lib/definitions'
 
 interface Props {
-    events: { title: string; date: string; backgroundColor: string; borderColor: string; image_url: string; }[]
+    events: Partial<CalendarEvent>[]
     addEvent: (date: string) => Promise<{
         success: boolean;
         errors: {
@@ -25,10 +27,21 @@ interface Props {
     }>
 }
 
+type EventObj = {
+    title: string;
+    backgroundColor: string;
+    startStr: string;
+    extendedProps: {
+        [key: string]: string;
+    }
+}
+
 const Calendar = ({ events = [], addEvent }: Props) => {
 
     const [open, setOpen] = useState(false);
     const [date, setDate] = useState('');
+    const [detailsOpen, setDetailsOpen] = useState(false);
+    const [event, setEvent] = useState<EventObj | undefined>(undefined);
 
     const handleDateClick = (arg: { date: Date }) => {
         const today = new Date();
@@ -55,11 +68,12 @@ const Calendar = ({ events = [], addEvent }: Props) => {
     }
 
 
-    const handleEventClick = (event: { event: { title: string, extendedProps: { [key: string]: string } } }) => {
-        alert(event.event.title)
+    const handleEventClick = (event: { event: EventObj }) => {
+        setDetailsOpen(true);
+        setEvent(event.event);
     }
 
-    const renderEventContent = ({ event }: { event: { title: string, extendedProps: { [key: string]: string } } }) => {
+    const renderEventContent = ({ event }: { event: EventObj }) => {
 
         return event.extendedProps.myEvent ? (
             <div className={`
@@ -101,6 +115,7 @@ const Calendar = ({ events = [], addEvent }: Props) => {
 
             />
             <ConfirmCreateEvent open={open} setOpen={setOpen} date={date} addEvent={addEvent} />
+            <EventDetails open={detailsOpen} setOpen={setDetailsOpen} event={event} />
         </>
     )
 }
