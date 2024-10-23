@@ -105,3 +105,8 @@ export type CalendarEvent = {
   color: string;
   image_url: string;
 }
+
+export enum CreateEventError {
+  DATE_BOOKED = 'DATE_BOOKED',
+  NO_USER = 'NO_USER'
+}

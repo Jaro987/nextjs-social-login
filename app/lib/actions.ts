@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import { date, z } from 'zod';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
+import { CreateEventError } from './definitions';
 
 export async function authenticate(
     prevState: string | undefined,
@@ -203,7 +204,7 @@ export async function createEvent(formData: FormData) {
         if (existingEvent.rowCount > 0) {
             return {
                 success: false,
-                message: 'This date is already booked.',
+                message: CreateEventError.DATE_BOOKED,
             };
         }
         response = await sql`
@@ -213,7 +214,7 @@ export async function createEvent(formData: FormData) {
     } catch (error) {
         return {
             success: false,
-            message: 'Database Error: Failed to Create Event.',
+            message: CreateEventError.NO_USER,
         };
     }
     revalidatePath('/book');

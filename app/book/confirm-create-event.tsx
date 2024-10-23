@@ -8,7 +8,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { useRouter } from 'next/navigation';
 import { toast } from "sonner";
+import { CreateEventError } from "../lib/definitions";
 
 type Props = {
     open: boolean;
@@ -29,6 +31,7 @@ type Props = {
 }
 
 export default function ConfirmCreateEvent({ open, setOpen, date, addEvent }: Props) {
+    const router = useRouter()
 
     const selectedDate = new Date(date);
 
@@ -46,8 +49,17 @@ export default function ConfirmCreateEvent({ open, setOpen, date, addEvent }: Pr
 
         if (r.success) {
             toast.success(r.message);
-        } else {
-            toast.error(r.message);
+        } else if (r.message === CreateEventError.NO_USER) {
+            toast.warning('Did not book this date!', {
+                description: 'You need to be logged in.',
+                action: {
+                    label: 'Take me to login',
+                    onClick: () => router.push('/login')
+                },
+                duration: Infinity
+            });
+        } else if (r.message === CreateEventError.DATE_BOOKED) {
+            toast.error('This date is already taken!');
         }
     }
     return (
