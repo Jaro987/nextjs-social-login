@@ -10,6 +10,7 @@ import { toast } from 'sonner'
 import { LockClosedIcon } from '@heroicons/react/24/outline';
 import EventDetails from './EventDetails'
 import { CalendarEvent } from '../lib/definitions'
+import AuthContext from '../AuthContext'
 
 interface Props {
     events: Partial<CalendarEvent>[]
@@ -99,7 +100,7 @@ const Calendar = ({ events = [], addEvent }: Props) => {
     }
 
     return (
-        <>
+        <AuthContext>
             <FullCalendar
                 plugins={[dayGridPlugin, interactionPlugin]}
                 initialView="dayGridMonth"
@@ -116,7 +117,7 @@ const Calendar = ({ events = [], addEvent }: Props) => {
             />
             <ConfirmCreateEvent open={open} setOpen={setOpen} date={date} addEvent={addEvent} />
             <EventDetails open={detailsOpen} setOpen={setDetailsOpen} event={event} />
-        </>
+        </AuthContext>
     )
 }
 
