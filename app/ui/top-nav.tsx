@@ -6,12 +6,12 @@ import Image from "next/image";
 import Link from "next/link";
 import MobileMenu from "./MobileMenu";
 
-
-
 const color = "#fff"
 
 export async function TopNav() {
     const session = await auth();
+    console.log("session", session);
+
     return (
         <div className="flex flex-row items-center justify-between w-full text-[#fff]">
             <Navigation color={color} />
@@ -19,9 +19,9 @@ export async function TopNav() {
             {session?.user ?
                 <div className="flex items-center">
                     <Image
-                        src={session.user.image as string}
+                        src={session.user.image || '' as string}
                         alt={`${session.user.name}'s profile picture`}
-                        className="mr-4 rounded-full"
+                        className="mr-4 rounded-full border-2 border-gray-300"
                         width={40}
                         height={40}
                     />

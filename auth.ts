@@ -3,7 +3,7 @@ import Credentials from 'next-auth/providers/credentials';
 import { authConfig } from './auth.config';
 import { z } from 'zod';
 import { QueryResultRow, sql } from '@vercel/postgres';
-import type { User } from '@/app/lib/definitions';
+import { UserRole, User } from '@/app/lib/definitions';
 import bcrypt from 'bcrypt';
 import Google from 'next-auth/providers/google';
 import Facebook from 'next-auth/providers/facebook';
@@ -29,47 +29,50 @@ async function createUserIfNotExists(profile: any) {
         userData.append('email', profile.email);
         userData.append('image', profile.picture.data.url);
         userData.append('password', profile.password);
+        userData.append('role', UserRole.USER);
 
         const result = await createUser(userData);
         return (result as QueryResultRow).rowCount > 0 ? 'created' : 'existed';
 
     }
 }
-// function showToast(user: string | undefined) {
-//     'use client'
-//     if (user === 'existed') {
-//         toast.info('Successfully logged in!');
-//     } else if (user === 'created') {
-//         toast.success('Successfully created account!');
-//     }
-// }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     ...authConfig,
+    callbacks: {
+        jwt({ token, user }) {
+            if (user) token.role = user.role
+            return token
+        },
+        session({ session, token }) {
+            session.user.role = token.role
+            return session
+        }
+    },
     providers: [
         Facebook({
             async profile(profile) {
                 await createUserIfNotExists({ ...profile, password: 'facebook' });
-                // const user = await createUserIfNotExists(profile);
-                // showToast(user);
-
+                const user = await getUser(profile.email);
                 return {
                     name: profile.name,
                     email: profile.email,
                     image: profile.picture.data.url,
+                    role: user?.role
                 };
             }
         }),
         Google({
             async profile(profile) {
                 await createUserIfNotExists({ ...profile, password: 'google' });
-
+                const user = await getUser(profile.email);
                 return {
                     name: profile.name,
                     email: profile.email,
-                    image: profile.picture
+                    image: profile.picture,
+                    role: user?.role
                 };
-            }
+            },
         }),
         Credentials({
             async authorize(credentials) {
@@ -82,7 +85,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     const user = await getUser(email);
                     if (!user) return null;
                     const passwordsMatch = await bcrypt.compare(password, user.password);
-                    if (passwordsMatch) return user;
+                    if (passwordsMatch) return {
+                        name: user.name,
+                        email: user.email,
+                        image: user.image_url,
+                        role: user.role
+                    };
                 }
 
                 console.log('Invalid credentials');

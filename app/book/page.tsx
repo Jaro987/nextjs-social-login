@@ -23,7 +23,7 @@ export default async function Page() {
                 backgroundColor: e.email === session?.user?.email ? e.color + '60' : '#87878760',
                 borderColor: e.email === session?.user?.email ? e.color + '80' : '#87878760',
                 image_url: e.image_url,
-                myEvent: e.email === session?.user?.email
+                email: e.email
             }
         })
     }

@@ -4,13 +4,13 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from "@fullcalendar/interaction"
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ConfirmCreateEvent from './confirm-create-event'
 import { toast } from 'sonner'
 import { LockClosedIcon } from '@heroicons/react/24/outline';
 import EventDetails from './EventDetails'
-import { CalendarEvent } from '../lib/definitions'
-import AuthContext from '../AuthContext'
+import { CalendarEvent, User, UserRole } from '../lib/definitions'
+import { useSession } from 'next-auth/react'
 
 interface Props {
     events: Partial<CalendarEvent>[]
@@ -43,6 +43,14 @@ const Calendar = ({ events = [], addEvent }: Props) => {
     const [date, setDate] = useState('');
     const [detailsOpen, setDetailsOpen] = useState(false);
     const [event, setEvent] = useState<EventObj | undefined>(undefined);
+    const { data: session } = useSession();
+    const [sessionUser, setSessionUser] = useState<User | null>(null);
+
+    useEffect(() => {
+        if (session) {
+            setSessionUser(session.user);
+        }
+    }, [session]);
 
     const handleDateClick = (arg: { date: Date }) => {
         const today = new Date();
@@ -68,15 +76,16 @@ const Calendar = ({ events = [], addEvent }: Props) => {
         setDate(formattedDate);
     }
 
-
     const handleEventClick = (event: { event: EventObj }) => {
         setDetailsOpen(true);
         setEvent(event.event);
     }
 
     const renderEventContent = ({ event }: { event: EventObj }) => {
+        const myEvent = event.extendedProps.email === sessionUser?.email;
+        const show = sessionUser?.role === UserRole.ADMIN || sessionUser?.role === UserRole.HOST;
 
-        return event.extendedProps.myEvent ? (
+        return show || myEvent ? (
             <div className={`
                 text-center pt-1 md:p-2
             `}>
@@ -100,7 +109,7 @@ const Calendar = ({ events = [], addEvent }: Props) => {
     }
 
     return (
-        <AuthContext>
+        <>
             <FullCalendar
                 plugins={[dayGridPlugin, interactionPlugin]}
                 initialView="dayGridMonth"
@@ -109,15 +118,13 @@ const Calendar = ({ events = [], addEvent }: Props) => {
                 events={events}
                 eventClick={handleEventClick}
                 eventContent={(event) => renderEventContent(event)}
-                // dayCellClassNames={'h-[100px] md:h-[160px] mb-0'}
                 firstDay={1}
-                // eventClassNames={'h-[64px] mb-0'}
                 timeZone='UTC'
 
             />
             <ConfirmCreateEvent open={open} setOpen={setOpen} date={date} addEvent={addEvent} />
             <EventDetails open={detailsOpen} setOpen={setDetailsOpen} event={event} />
-        </AuthContext>
+        </>
     )
 }
 

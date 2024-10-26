@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 import { date, z } from 'zod';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
-import { CreateEventError } from './definitions';
+import { CreateEventError, UserRole } from './definitions';
 
 export async function authenticate(
     prevState: string | undefined,
@@ -145,6 +145,7 @@ const UserSchema = z.object({
     email: z.string().email(),
     image: z.string(),
     password: z.string(),
+    role: z.enum([UserRole.ADMIN, UserRole.HOST, UserRole.USER], { invalid_type_error: 'Invalid role.' }),
 });
 
 export async function createUser(formData: FormData) {
@@ -152,6 +153,7 @@ export async function createUser(formData: FormData) {
         name: formData.get('name'),
         email: formData.get('email'),
         image: formData.get('image'),
+        role: formData.get('role'),
     });
 
     if (!validatedFields.success) {
@@ -161,11 +163,11 @@ export async function createUser(formData: FormData) {
         };
     }
 
-    const { name, email, image, password } = validatedFields.data;
+    const { name, email, image, password, role } = validatedFields.data;
     try {
         return await sql`
-        INSERT INTO users (name, email, password, image_url)
-        VALUES (${name}, ${email}, ${password}, ${image})
+        INSERT INTO users (name, email, password, image_url, role)
+        VALUES (${name}, ${email}, ${password}, ${image}, ${role})
       `;
     } catch (error) {
         return {

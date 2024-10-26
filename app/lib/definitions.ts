@@ -7,6 +7,8 @@ export type User = {
   name: string;
   email: string;
   password: string;
+  role: UserRole;
+  image_url: string;
 };
 
 export type Customer = {
@@ -87,12 +89,19 @@ export type InvoiceForm = {
   status: 'pending' | 'paid';
 };
 
+export enum UserRole {
+  ADMIN = 'admin',
+  HOST = 'host',
+  USER = 'user'
+}
+
 export type CalendarUser = {
   id: string;
   name: string;
   email: string;
   image_url: string;
   color: string;
+  role: UserRole;
   events: CalendarEvent[];
 }
 

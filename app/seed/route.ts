@@ -145,3 +145,21 @@ export async function GET() {
 // for adding color to users:
 // ALTER TABLE users
 // ADD COLUMN color VARCHAR(255);
+
+// for adding role to users:
+// ALTER TABLE users
+// ADD COLUMN role VARCHAR(255);
+
+//updating users with roles:
+// UPDATE users
+// SET role='host'
+// WHERE users.id = 'ea5dd26b-5281-4a70-93bf-aa811bec9954'
+
+//add user
+// INSERT INTO users (name, email, password, image_url, color, role)
+// VALUES ('Jaroslav Firmin', 'jaroslav.mucaji@badboy.solutions', '$2b$10$fKk/zeflsh6jx2nIO2XKrepnJCY0sOlK8O.S4CH.nM6jAq75mLZQW', '/jaroslav-firmin.png', '#02f5d4', 'user')
+
+
+// update users
+// set image_url='/ed-profile.png'
+// where users.id = '1602aba9-8e45-4816-b0ff-8d7961d11600' (Jaroslav Firmin)

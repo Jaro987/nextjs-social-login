@@ -3,6 +3,7 @@ import { inter } from '@/app/ui/fonts';
 import { Metadata } from 'next';
 import { Toaster } from '@/components/ui/sonner';
 import { TopNav } from './ui/top-nav';
+import AuthContext from './AuthContext';
 
 export const metadata: Metadata = {
   title: {
@@ -19,15 +20,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} antialiased bg-[url('/hero-image.jpg')] bg-cover bg-center backdrop-brightness-75`}>
-        <div className="flex flex-col items-center justify-between p-4 md:p-8">
-          <TopNav />
-          <p className="text-[42px] md:text-[72px] font-bold text-white text-center">A frame pool house</p>
-        </div>
-        {children}
-      </body>
-      <Toaster richColors closeButton />
-    </html>
+    <AuthContext>
+      <html lang="en">
+        <body className={`${inter.className} antialiased bg-[url('/hero-image.jpg')] bg-cover bg-center backdrop-brightness-75`}>
+          <div className="flex flex-col items-center justify-between p-4 md:p-8">
+            <TopNav />
+            <p className="text-[42px] md:text-[72px] font-bold text-white text-center">A frame pool house</p>
+          </div>
+          {children}
+        </body>
+        <Toaster richColors closeButton />
+      </html>
+    </AuthContext>
   );
 }

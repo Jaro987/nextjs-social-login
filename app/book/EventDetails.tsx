@@ -1,6 +1,7 @@
 import { DialogHeader, Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import Image from "next/image";
 import { useSession } from 'next-auth/react';
+import { UserRole } from "../lib/definitions";
 
 type Props = {
     open: boolean
@@ -19,7 +20,7 @@ const EventDetails = ({ open, setOpen, event }: Props) => {
     const { data: session } = useSession();
 
     const bookingDetails = () => {
-        if (session?.user?.name === event?.title) {
+        if (session?.user?.name === event?.title || session?.user.role === UserRole.ADMIN || session?.user.role === UserRole.HOST) {
             return (
                 <>
                     <p className="font-bold">Guest:</p>
