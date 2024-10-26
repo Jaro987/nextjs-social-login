@@ -4,13 +4,12 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from "@fullcalendar/interaction"
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import ConfirmCreateEvent from './confirm-create-event'
 import { toast } from 'sonner'
 import { LockClosedIcon } from '@heroicons/react/24/outline';
 import EventDetails from './EventDetails'
-import { CalendarEvent, User, UserRole } from '../lib/definitions'
-import { useSession } from 'next-auth/react'
+import { CalendarEvent } from '../lib/definitions'
 
 interface Props {
     events: Partial<CalendarEvent>[]
@@ -43,14 +42,6 @@ const Calendar = ({ events = [], addEvent }: Props) => {
     const [date, setDate] = useState('');
     const [detailsOpen, setDetailsOpen] = useState(false);
     const [event, setEvent] = useState<EventObj | undefined>(undefined);
-    const { data: session } = useSession();
-    const [sessionUser, setSessionUser] = useState<User | null>(null);
-
-    useEffect(() => {
-        if (session) {
-            setSessionUser(session.user);
-        }
-    }, [session]);
 
     const handleDateClick = (arg: { date: Date }) => {
         const today = new Date();
@@ -82,15 +73,14 @@ const Calendar = ({ events = [], addEvent }: Props) => {
     }
 
     const renderEventContent = ({ event }: { event: EventObj }) => {
-        const myEvent = event.extendedProps.email === sessionUser?.email;
-        const show = sessionUser?.role === UserRole.ADMIN || sessionUser?.role === UserRole.HOST;
+        const { show, myEvent, image_url } = event.extendedProps;
 
         return show || myEvent ? (
             <div className={`
                 text-center pt-1 md:p-2
             `}>
                 <Image
-                    src={event.extendedProps.image_url}
+                    src={image_url}
                     className="mx-auto rounded-full border-2 border-gray-300"
                     width={28}
                     height={28}

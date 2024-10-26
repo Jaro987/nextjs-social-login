@@ -5,7 +5,7 @@ import { fetchAllCalendarEvents } from '../lib/data';
 import { Suspense } from 'react';
 import { createEvent } from '../lib/actions';
 import { auth, getUser } from '@/auth';
-import { CalendarEvent } from '../lib/definitions';
+import { CalendarEvent, UserRole } from '../lib/definitions';
 
 export const metadata: Metadata = {
     title: 'Book',
@@ -20,10 +20,12 @@ export default async function Page() {
             return {
                 title: e.name,
                 date: e.date,
-                backgroundColor: e.email === session?.user?.email ? e.color + '60' : '#87878760',
-                borderColor: e.email === session?.user?.email ? e.color + '80' : '#87878760',
+                backgroundColor: session?.user.role === UserRole.ADMIN || session?.user.role === UserRole.HOST || e.email === session?.user?.email ? e.color + '60' : '#87878760',
+                borderColor: session?.user.role === UserRole.ADMIN || session?.user.role === UserRole.HOST || e.email === session?.user?.email ? e.color + '80' : '#87878760',
                 image_url: e.image_url,
-                email: e.email
+                email: e.email,
+                myEvent: e.email === session?.user?.email,
+                show: session?.user?.role === UserRole.ADMIN || session?.user?.role === UserRole.HOST
             }
         })
     }
