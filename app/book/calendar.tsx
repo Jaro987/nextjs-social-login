@@ -109,7 +109,7 @@ const Calendar = ({ events = [], addEvent }: Props) => {
                 eventClick={handleEventClick}
                 eventContent={(event) => renderEventContent(event)}
                 firstDay={1}
-                timeZone='UTC'
+                timeZone='local'
 
             />
             <ConfirmCreateEvent open={open} setOpen={setOpen} date={date} addEvent={addEvent} />

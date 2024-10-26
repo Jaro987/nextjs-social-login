@@ -10,7 +10,6 @@ const color = "#fff"
 
 export async function TopNav() {
     const session = await auth();
-    console.log("session", session);
 
     return (
         <div className="flex flex-row items-center justify-between w-full text-[#fff]">

@@ -1,7 +1,5 @@
 import { DialogHeader, Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import Image from "next/image";
-import { useSession } from 'next-auth/react';
-import { UserRole } from "../lib/definitions";
 
 type Props = {
     open: boolean
@@ -17,7 +15,8 @@ type Props = {
 }
 
 const EventDetails = ({ open, setOpen, event }: Props) => {
-    const { data: session } = useSession();
+    const { title, startStr, backgroundColor, extendedProps } = event || {};
+    const { image_url, email, phone, show, myEvent } = extendedProps || {};
 
     const formatDate = (dateStr?: string) => {
         if (!dateStr) {
@@ -34,20 +33,20 @@ const EventDetails = ({ open, setOpen, event }: Props) => {
     }
 
     const bookingDetails = () => {
-        if (session?.user?.name === event?.title || session?.user.role === UserRole.ADMIN || session?.user.role === UserRole.HOST) {
+        if (myEvent || show) {
             return (
                 <>
                     <p className="font-bold">Guest:</p>
-                    <div className={`flex flex-row gap-6 bg-[${event?.backgroundColor}]`}>
-                        <Image src={event?.extendedProps.image_url || ''} className="rounded-full border-2 border-gray-300" width={80} height={80} alt={`${event?.title}'s profile picture`} />
+                    <div className={`flex flex-row gap-6 bg-[${backgroundColor}]`}>
+                        <Image src={image_url || ''} className="rounded-full border-2 border-gray-300" width={80} height={80} alt={`${title}'s profile picture`} />
                         <div className="flex flex-col">
-                            <p>{event?.title}</p>
-                            <p>{event?.extendedProps.email}</p>
-                            <p>{event?.extendedProps.phone}</p>
+                            <p>{title}</p>
+                            <p>{email}</p>
+                            <p>{phone}</p>
                         </div>
                     </div >
                     <p className="font-bold">Date:</p>
-                    <p>{formatDate(event?.startStr)}</p>
+                    <p>{formatDate(startStr)}</p>
                 </>
             )
         }

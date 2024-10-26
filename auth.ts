@@ -8,6 +8,7 @@ import bcrypt from 'bcrypt';
 import Google from 'next-auth/providers/google';
 import Facebook from 'next-auth/providers/facebook';
 import { createUser } from './app/lib/actions';
+import { getRandomColor } from './app/lib/utils';
 
 
 export async function getUser(email: string): Promise<User | undefined> {
@@ -30,6 +31,7 @@ async function createUserIfNotExists(profile: any) {
         userData.append('image', profile.picture.data.url);
         userData.append('password', profile.password);
         userData.append('role', UserRole.USER);
+        userData.append('color', getRandomColor());
 
         const result = await createUser(userData);
         return (result as QueryResultRow).rowCount > 0 ? 'created' : 'existed';
