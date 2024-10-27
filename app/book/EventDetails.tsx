@@ -1,10 +1,12 @@
-import { DialogHeader, Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button";
+import { DialogHeader, Dialog, DialogContent, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import Image from "next/image";
 
 type Props = {
     open: boolean
     setOpen: (open: boolean) => void,
     event?: {
+        id: string;
         title: string;
         startStr: string;
         backgroundColor: string;
@@ -12,10 +14,11 @@ type Props = {
             [key: string]: string;
         };
     }
+    cancelEvent: (id: string) => Promise<{ message: string }>;
 }
 
-const EventDetails = ({ open, setOpen, event }: Props) => {
-    const { title, startStr, backgroundColor, extendedProps } = event || {};
+const EventDetails = ({ open, setOpen, event, cancelEvent }: Props) => {
+    const { id, title, startStr, backgroundColor, extendedProps } = event || {};
     const { image_url, email, phone, show, myEvent } = extendedProps || {};
 
     const formatDate = (dateStr?: string) => {
@@ -55,6 +58,21 @@ const EventDetails = ({ open, setOpen, event }: Props) => {
         )
     }
 
+    const deleteEvent = async (id: string) => {
+        await cancelEvent(id || '');
+        setOpen(false);
+    }
+
+    const bookingFooter = () => {
+        if (myEvent || show) {
+
+            return (
+                <DialogFooter>
+                    <Button variant="destructive" onClick={() => deleteEvent(id || '')}>Cancel Booking</Button>
+                </DialogFooter>)
+        }
+    }
+
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent>
@@ -63,7 +81,7 @@ const EventDetails = ({ open, setOpen, event }: Props) => {
                     <DialogDescription></DialogDescription>
                 </DialogHeader>
                 {bookingDetails()}
-
+                {bookingFooter()}
             </DialogContent>
         </Dialog>
 

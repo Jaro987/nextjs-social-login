@@ -24,10 +24,12 @@ interface Props {
         success: boolean;
         message: string;
         errors?: undefined;
-    }>
+    }>,
+    cancelEvent: (id: string) => Promise<{ message: string }>
 }
 
-type EventObj = {
+type EventObj = { // TODO: use this type for event details
+    id: string;
     title: string;
     backgroundColor: string;
     startStr: string;
@@ -36,7 +38,7 @@ type EventObj = {
     }
 }
 
-const Calendar = ({ events = [], addEvent }: Props) => {
+const Calendar = ({ events = [], addEvent, cancelEvent }: Props) => {
 
     const [open, setOpen] = useState(false);
     const [date, setDate] = useState('');
@@ -113,7 +115,7 @@ const Calendar = ({ events = [], addEvent }: Props) => {
 
             />
             <ConfirmCreateEvent open={open} setOpen={setOpen} date={date} addEvent={addEvent} />
-            <EventDetails open={detailsOpen} setOpen={setDetailsOpen} event={event} />
+            <EventDetails open={detailsOpen} setOpen={setDetailsOpen} event={event} cancelEvent={cancelEvent} />
         </>
     )
 }

@@ -226,3 +226,15 @@ export async function createEvent(formData: FormData) {
     };
 
 }
+
+export async function deleteEvent(id: string) {
+    // TODO:change this action to set event as invalid or something, save who "cancelled" it instead of deleting it
+    //then change the logic to only show valid events in calendar
+    try {
+        await sql`DELETE FROM calendar_events WHERE id = ${id}`;
+        revalidatePath('/book');
+        return { message: 'Deleted Event.' };
+    } catch (error) {
+        return { message: 'Database Error: Failed to Delete Event.' };
+    }
+}

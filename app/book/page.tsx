@@ -3,7 +3,7 @@ import Calendar from './calendar';
 import { Card, CardContent } from '@/components/ui/card';
 import { fetchAllCalendarEvents } from '../lib/data';
 import { Suspense } from 'react';
-import { createEvent } from '../lib/actions';
+import { createEvent, deleteEvent } from '../lib/actions';
 import { auth, getUser } from '@/auth';
 import { CalendarEvent, UserRole } from '../lib/definitions';
 
@@ -18,6 +18,7 @@ export default async function Page() {
     const formatEvents = (events: CalendarEvent[]) => {
         return events.map((e) => {
             return {
+                id: e.event_id,
                 title: e.name,
                 date: e.date,
                 backgroundColor: session?.user.role === UserRole.ADMIN || session?.user.role === UserRole.HOST || e.email === session?.user?.email ? e.color + '60' : '#87878760',
@@ -41,11 +42,16 @@ export default async function Page() {
 
     }
 
+    const cancelEvent = async (id: string) => {
+        'use server'
+        return await deleteEvent(id);
+    }
+
     return (
         <Suspense fallback={'Loading...'}>
             <Card className="flex h-full w-full pt-4 xl:w-4/5 2xl:w-3/4 m-auto items-center justify-center text-[10px] md:text-2xl text-white bg-black/50 rounded-lg border-0">
                 <CardContent>
-                    <Calendar events={formatEvents(events)} addEvent={addEvent} />
+                    <Calendar events={formatEvents(events)} addEvent={addEvent} cancelEvent={cancelEvent} />
                 </CardContent>
             </Card>
         </Suspense>
