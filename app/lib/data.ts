@@ -227,9 +227,46 @@ export async function fetchAllCalendarEvents() {
         u.name, 
         u.email, 
         u.color,
-      u.image_url
+        u.image_url
       FROM calendar_events ce
-      JOIN users u ON ce.user_id = u.id;
+      JOIN users u ON ce.user_id = u.id
+      WHERE ce.status = 'active';
+    `;
+
+    const events = data.rows;
+    return events;
+  } catch (err) {
+    console.error('Database Error:', err);
+    throw new Error('Failed to fetch all events.');
+  }
+}
+
+export async function fetchAllCalendarEventsForAdmin() {
+  try {
+    const data = await sql<CalendarEvent>`
+      SELECT
+          ce.id AS event_id, 
+          ce.date, 
+          u.id AS user_id, 
+          u.name, 
+          u.email, 
+          u.color,
+          u.image_url,
+          COALESCE(
+              jsonb_agg(
+                  jsonb_build_object(
+                'id', c.id,
+              'event_id', c.event_id,
+              'cancelled_by', c.cancelled_by,
+              'cancelled_at', c.cancelled_at
+                  )
+              ) FILTER (WHERE c.id IS NOT NULL), 
+              '[]'::jsonb
+          ) AS cancellations
+      FROM calendar_events ce
+      JOIN users u ON ce.user_id = u.id
+      LEFT JOIN cancellation c ON ce.id = c.event_id
+      GROUP BY ce.id, u.id;
     `;
 
     const events = data.rows;

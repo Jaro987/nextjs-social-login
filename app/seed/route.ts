@@ -163,3 +163,27 @@ export async function GET() {
 // update users
 // set image_url='/ed-profile.png'
 // where users.id = '1602aba9-8e45-4816-b0ff-8d7961d11600' (Jaroslav Firmin)
+
+
+//create cancellation table
+// await client.sql`
+// CREATE TABLE IF NOT EXISTS cancellation (
+//   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+//      event_id UUID NOT NULL,
+//      cancelled_at TIMESTAMP NOT NULL,
+//      cancelled_by UUID NOT NULL,
+//      revoked_at TIMESTAMP,
+//      revoked_by UUID,
+  
+//      FOREIGN KEY (event_id) REFERENCES calendar_events(id),
+//      FOREIGN KEY (cancelled_by) REFERENCES users(id),
+//      FOREIGN KEY (revoked_by) REFERENCES users(id)
+//   );
+//`
+
+// for adding status to calendar_events:
+// ALTER TABLE calendar_events
+// ADD COLUMN status VARCHAR(255);
+
+// INSERT INTO cancellation (event_id, cancelled_at, cancelled_by)
+// VALUES ('ea5dd26b-5281-4a70-93bf-aa811bec9954', '2023-05-01 10:00:00', 'ea5dd26b-5281-4a70-93bf-aa811bec9954')

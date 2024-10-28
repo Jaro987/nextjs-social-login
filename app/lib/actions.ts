@@ -7,7 +7,8 @@ import { redirect } from 'next/navigation';
 import { date, z } from 'zod';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
-import { CreateEventError, UserRole } from './definitions';
+import { CreateEventError, EventStatus, UserRole } from './definitions';
+import { auth, getUser } from '@/auth';
 
 export async function authenticate(
     prevState: string | undefined,
@@ -200,7 +201,7 @@ export async function createEvent(formData: FormData) {
     try {
         const existingEvent = await sql`
                 SELECT * FROM calendar_events
-                WHERE date = ${date}
+                WHERE date = ${date} AND status = ${EventStatus.ACTIVE}
             `;
 
         if (existingEvent.rowCount > 0) {
@@ -210,10 +211,12 @@ export async function createEvent(formData: FormData) {
             };
         }
         response = await sql`
-        INSERT INTO calendar_events (date, user_id)
-        VALUES (${date}, ${user_id})
+        INSERT INTO calendar_events (date, user_id, status)
+        VALUES (${date}, ${user_id}, ${EventStatus.ACTIVE})
       `;
     } catch (error) {
+        console.log({ error });
+
         return {
             success: false,
             message: CreateEventError.NO_USER,
@@ -227,14 +230,51 @@ export async function createEvent(formData: FormData) {
 
 }
 
-export async function deleteEvent(id: string) {
-    // TODO:change this action to set event as invalid or something, save who "cancelled" it instead of deleting it
-    //then change the logic to only show valid events in calendar
+export async function deleteEvent(id: string, date: number) {
+    const session = await auth();
+    const canceller = await getUser(session?.user?.email as string);
+
     try {
-        await sql`DELETE FROM calendar_events WHERE id = ${id}`;
+        await sql`
+            UPDATE calendar_events
+            SET status = ${EventStatus.CANCELLED}
+            WHERE id = ${id};
+          `;
+        await sql`
+            INSERT INTO cancellation (event_id, cancelled_at, cancelled_by)
+            VALUES (${id}, ${new Date(date).toISOString()}, ${canceller?.id});
+          `
         revalidatePath('/book');
         return { message: 'Deleted Event.' };
     } catch (error) {
+        console.log({ error });
+
         return { message: 'Database Error: Failed to Delete Event.' };
+    }
+}
+
+export async function revokeEvent(id: string, date: number) {
+    const session = await auth();
+    const revoker = await getUser(session?.user?.email as string);
+
+    try {
+        await sql`
+            UPDATE calendar_events
+            SET status = ${EventStatus.ACTIVE}
+            WHERE id = ${id};
+          `;
+        //ovo proveri, mora da se doda na onaj cancellation koji je trenutno u toku - proveri da li postoji, koji mu je id
+        //takodje, dodaj ui na EventDetails.tsx za prikaz cancelled eventa kao i revoked eventa
+        await sql`
+            UPDATE cancellation
+            SET revoked_at = ${new Date(date).toISOString()}, revoked_by = ${revoker?.id}
+            WHERE event_id = ${id};
+          `
+        revalidatePath('/book');
+        return { message: 'Revoked Event.' };
+    } catch (error) {
+        console.log({ error });
+
+        return { message: 'Database Error: Failed to Revoke Event.' };
     }
 }

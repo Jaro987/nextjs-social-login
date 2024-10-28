@@ -9,7 +9,8 @@ import ConfirmCreateEvent from './confirm-create-event'
 import { toast } from 'sonner'
 import { LockClosedIcon } from '@heroicons/react/24/outline';
 import EventDetails from './EventDetails'
-import { CalendarEvent } from '../lib/definitions'
+import { CalendarEvent, CalendarEventObj } from '../lib/definitions'
+import { EventClickArg, EventContentArg } from '@fullcalendar/core/index.js'
 
 interface Props {
     events: Partial<CalendarEvent>[]
@@ -25,17 +26,7 @@ interface Props {
         message: string;
         errors?: undefined;
     }>,
-    cancelEvent: (id: string) => Promise<{ message: string }>
-}
-
-type EventObj = { // TODO: use this type for event details
-    id: string;
-    title: string;
-    backgroundColor: string;
-    startStr: string;
-    extendedProps: {
-        [key: string]: string;
-    }
+    cancelEvent: (id: string, date: number) => Promise<{ message: string }>
 }
 
 const Calendar = ({ events = [], addEvent, cancelEvent }: Props) => {
@@ -43,7 +34,7 @@ const Calendar = ({ events = [], addEvent, cancelEvent }: Props) => {
     const [open, setOpen] = useState(false);
     const [date, setDate] = useState('');
     const [detailsOpen, setDetailsOpen] = useState(false);
-    const [event, setEvent] = useState<EventObj | undefined>(undefined);
+    const [event, setEvent] = useState<CalendarEventObj | undefined>(undefined);
 
     const handleDateClick = (arg: { date: Date }) => {
         const today = new Date();
@@ -69,14 +60,17 @@ const Calendar = ({ events = [], addEvent, cancelEvent }: Props) => {
         setDate(formattedDate);
     }
 
-    const handleEventClick = (event: { event: EventObj }) => {
+    const handleEventClick = (arg: EventClickArg) => {
+        const calendarEvent = arg.event as unknown as CalendarEventObj;
         setDetailsOpen(true);
-        setEvent(event.event);
+        setEvent(calendarEvent);
     }
-
-    const renderEventContent = ({ event }: { event: EventObj }) => {
-        const { show, myEvent, image_url } = event.extendedProps;
-
+    const renderEventContent = (event: EventContentArg) => {
+        const calendarEvent = event.event as unknown as CalendarEventObj;
+        const show = calendarEvent?.extendedProps?.show;
+        const myEvent = calendarEvent?.extendedProps?.myEvent;
+        const image_url = calendarEvent?.extendedProps?.image_url;
+        // TODO: add styles for cancelled events
         return show || myEvent ? (
             <div className={`
                 text-center pt-1 md:p-2
@@ -86,9 +80,9 @@ const Calendar = ({ events = [], addEvent, cancelEvent }: Props) => {
                     className="mx-auto rounded-full border-2 border-gray-300"
                     width={28}
                     height={28}
-                    alt={`${event.title}'s profile picture`}
+                    alt={`${calendarEvent.title}'s profile picture`}
                 />
-                <p className='text-[10px] md:text-base whitespace-pre-line truncate'>{event.title}</p>
+                <p className='text-[10px] md:text-base whitespace-pre-line truncate'>{calendarEvent.title}</p>
             </div>
         ) : (
             <div className={`

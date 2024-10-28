@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import Calendar from './calendar';
 import { Card, CardContent } from '@/components/ui/card';
-import { fetchAllCalendarEvents } from '../lib/data';
+import { fetchAllCalendarEvents, fetchAllCalendarEventsForAdmin } from '../lib/data';
 import { Suspense } from 'react';
 import { createEvent, deleteEvent } from '../lib/actions';
 import { auth, getUser } from '@/auth';
@@ -11,9 +11,8 @@ export const metadata: Metadata = {
     title: 'Book',
 };
 export default async function Page() {
-    const events = await fetchAllCalendarEvents();
-
     const session = await auth();
+    const events = session?.user?.role === UserRole.ADMIN || session?.user?.role === UserRole.HOST ? await fetchAllCalendarEventsForAdmin() : await fetchAllCalendarEvents();
 
     const formatEvents = (events: CalendarEvent[]) => {
         return events.map((e) => {
@@ -26,7 +25,8 @@ export default async function Page() {
                 image_url: e.image_url,
                 email: e.email,
                 myEvent: e.email === session?.user?.email,
-                show: session?.user?.role === UserRole.ADMIN || session?.user?.role === UserRole.HOST
+                show: session?.user?.role === UserRole.ADMIN || session?.user?.role === UserRole.HOST,
+                cancellations: e.cancellations
             }
         })
     }
@@ -42,9 +42,9 @@ export default async function Page() {
 
     }
 
-    const cancelEvent = async (id: string) => {
+    const cancelEvent = async (id: string, date: number) => {
         'use server'
-        return await deleteEvent(id);
+        return await deleteEvent(id, date);
     }
 
     return (

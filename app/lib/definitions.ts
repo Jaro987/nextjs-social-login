@@ -113,9 +113,39 @@ export type CalendarEvent = {
   email: string;
   color: string;
   image_url: string;
+  cancellations?: Cancellation[] | null;
+  status: EventStatus;
+}
+
+export type CalendarEventObj = {
+  id: string;
+  title: string;
+  startStr: string;
+  backgroundColor: string;
+  extendedProps: {
+    image_url: string,
+    email: string,
+    phone: string,
+    show: boolean,
+    myEvent: boolean,
+    cancellations: Cancellation[] | null
+  }
+}
+
+export enum EventStatus {
+  ACTIVE = 'active',
+  CANCELLED = 'cancelled',
 }
 
 export enum CreateEventError {
   DATE_BOOKED = 'DATE_BOOKED',
   NO_USER = 'NO_USER'
+}
+
+export type Cancellation = {
+  event_id: string | null;
+  cancelled_at: string | null;
+  cancelled_by: string | null;
+  revoked_at: string | null;
+  revoked_by: string | null;
 }

@@ -1,25 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { DialogHeader, Dialog, DialogContent, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import Image from "next/image";
+import { CalendarEventObj } from "../lib/definitions";
 
 type Props = {
     open: boolean
     setOpen: (open: boolean) => void,
-    event?: {
-        id: string;
-        title: string;
-        startStr: string;
-        backgroundColor: string;
-        extendedProps: {
-            [key: string]: string;
-        };
-    }
-    cancelEvent: (id: string) => Promise<{ message: string }>;
+    event?: CalendarEventObj
+    cancelEvent: (id: string, date: number) => Promise<{ message: string }>;
 }
 
 const EventDetails = ({ open, setOpen, event, cancelEvent }: Props) => {
     const { id, title, startStr, backgroundColor, extendedProps } = event || {};
-    const { image_url, email, phone, show, myEvent } = extendedProps || {};
+    const { image_url, email, phone, show, myEvent, cancellations } = extendedProps || {};
 
     const formatDate = (dateStr?: string) => {
         if (!dateStr) {
@@ -36,7 +29,31 @@ const EventDetails = ({ open, setOpen, event, cancelEvent }: Props) => {
     }
 
     const bookingDetails = () => {
-        if (myEvent || show) {
+        if (show) {
+            return (
+                <>
+                    <p className="font-bold">Guest:</p>
+                    <div className={`flex flex-row gap-6 bg-[${backgroundColor}]`}>
+                        <Image src={image_url || ''} className="rounded-full border-2 border-gray-300" width={80} height={80} alt={`${title}'s profile picture`} />
+                        <div className="flex flex-col">
+                            <p>{title}</p>
+                            <p>{email}</p>
+                            <p>{phone}</p>
+                        </div>
+                    </div >
+                    <p className="font-bold">Date:</p>
+                    <p>{formatDate(startStr)}</p>
+                    {/* TODO: format this UI nicely */}
+                    {cancellations?.map((cancellation) => (
+                        <div key={cancellation.cancelled_at}>
+                            <p>{cancellation.cancelled_at}</p>
+                            <p>{cancellation.cancelled_by}</p>
+                        </div>
+                    ))}
+                </>
+            )
+        }
+        if (myEvent) {
             return (
                 <>
                     <p className="font-bold">Guest:</p>
@@ -59,7 +76,7 @@ const EventDetails = ({ open, setOpen, event, cancelEvent }: Props) => {
     }
 
     const deleteEvent = async (id: string) => {
-        await cancelEvent(id || '');
+        await cancelEvent(id, Date.now());
         setOpen(false);
     }
 
