@@ -256,20 +256,18 @@ export async function deactivateEvent(id: string, date: number) {
 export async function activateEvent(id: string, date: number) {
     const session = await auth();
     const revoker = await getUserByEmail(session?.user?.email as string);
-
+    // TODO: check if there is a reservation for that day, if there is - it can't be activated
     try {
         await sql`
             UPDATE calendar_events
             SET status = ${EventStatus.ACTIVE}
             WHERE id = ${id};
           `;
-        //ovo proveri, mora da se doda na onaj cancellation koji je trenutno u toku - proveri da li postoji, koji mu je id
-        //takodje, dodaj ui na EventDetails.tsx za prikaz cancelled eventa kao i revoked eventa
         await sql`
             UPDATE cancellation
             SET revoked_at = ${new Date(date).toISOString()}, revoked_by = ${revoker?.id}
-            WHERE event_id = ${id};
-          `
+            WHERE event_id = ${id} AND revoked_at IS NULL AND revoked_by IS NULL;
+          `;
         revalidatePath('/book');
         return { message: 'Revoked Event.' };
     } catch (error) {

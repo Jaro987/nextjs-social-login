@@ -21,7 +21,7 @@ export default async function Page() {
                 title: e.name,
                 date: e.date,
                 backgroundColor: session?.user.role === UserRole.ADMIN || session?.user.role === UserRole.HOST || e.email === session?.user?.email ? e.color + '60' : '#87878760',
-                borderColor: session?.user.role === UserRole.ADMIN || session?.user.role === UserRole.HOST || e.email === session?.user?.email ? e.color + '80' : '#87878760',
+                borderColor: session?.user.role === UserRole.ADMIN || session?.user.role === UserRole.HOST || e.email === session?.user?.email ? e.color + '80' : '#87878780',
                 image_url: e.image_url,
                 email: e.email,
                 myEvent: e.email === session?.user?.email,

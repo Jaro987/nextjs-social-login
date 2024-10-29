@@ -9,7 +9,7 @@ import ConfirmCreateEvent from './confirm-create-event'
 import { toast } from 'sonner'
 import { LockClosedIcon } from '@heroicons/react/24/outline';
 import EventDetails from './EventDetails'
-import { CalendarEvent, CalendarEventObj } from '../lib/definitions'
+import { CalendarEvent, CalendarEventObj, EventStatus } from '../lib/definitions'
 import { EventClickArg, EventContentArg } from '@fullcalendar/core/index.js'
 
 interface Props {
@@ -71,10 +71,10 @@ const Calendar = ({ events = [], addEvent, cancelEvent, revokeEvent }: Props) =>
         const show = calendarEvent?.extendedProps?.show;
         const myEvent = calendarEvent?.extendedProps?.myEvent;
         const image_url = calendarEvent?.extendedProps?.image_url;
-        // TODO: add styles for cancelled events
-        return show || myEvent ? (
+        const status = calendarEvent?.extendedProps?.status;
+        return show && status === EventStatus.CANCELLED ? ( // TODO: join 'show && status === EventStatus.CANCELLED' and 'show || myEvent' ???
             <div className={`
-                text-center pt-1 md:p-2
+                text-center pt-1 md:p-2 relative
             `}>
                 <Image
                     src={image_url}
@@ -84,15 +84,30 @@ const Calendar = ({ events = [], addEvent, cancelEvent, revokeEvent }: Props) =>
                     alt={`${calendarEvent.title}'s profile picture`}
                 />
                 <p className='text-[10px] md:text-base whitespace-pre-line truncate'>{calendarEvent.title}</p>
+                <div className='absolute top-[32px] left-0 -rotate-45 text-rose-600 border-2 border-rose-600 rounded bg-black/50'>CANCELLED</div>
             </div>
-        ) : (
-            <div className={`
+        ) :
+            show || myEvent ? (
+                <div className={`
                 text-center pt-1 md:p-2
             `}>
-                <LockClosedIcon className='w-8 mx-auto' />
-                <p className='text-[10px] md:text-base whitespace-pre-line truncate'>taken</p>
-            </div>
-        )
+                    <Image
+                        src={image_url}
+                        className="mx-auto rounded-full border-2 border-gray-300"
+                        width={28}
+                        height={28}
+                        alt={`${calendarEvent.title}'s profile picture`}
+                    />
+                    <p className='text-[10px] md:text-base whitespace-pre-line truncate'>{calendarEvent.title}</p>
+                </div>
+            ) : (
+                <div className={`
+                text-center pt-1 md:p-2
+            `}>
+                    <LockClosedIcon className='w-8 mx-auto' />
+                    <p className='text-[10px] md:text-base whitespace-pre-line truncate'>taken</p>
+                </div>
+            )
     }
 
     return (

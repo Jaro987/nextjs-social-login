@@ -3,6 +3,7 @@ import { DialogHeader, Dialog, DialogContent, DialogTitle, DialogDescription, Di
 import Image from "next/image";
 import { CalendarEventObj, EventStatus } from "../lib/definitions";
 import { formatDateToLocal } from "../lib/utils";
+import { ArrowUturnDownIcon, XCircleIcon } from "@heroicons/react/24/outline";
 
 type Props = {
     open: boolean
@@ -31,13 +32,18 @@ const EventDetails = ({ open, setOpen, event, cancelEvent, revokeEvent }: Props)
                     </div >
                     <p className="font-bold">Date:</p>
                     <p>{formatDateToLocal(startStr)}</p>
-                    {/* TODO: format this UI nicely */}
                     {cancellations && cancellations?.length > 0 && <p className="font-bold">History:</p>}
                     {cancellations?.map((cancellation) => (
                         <div key={cancellation.cancelled_at} className="flex flex-col">
-                            <p className="text-red-500">Cancelled on {formatDateToLocal(cancellation.cancelled_at, true)} by {cancellation.cancelled_by}</p>
+                            <div className="flex flex-row gap-2">
+                                <XCircleIcon className="w-4 pt-1" color="red" />
+                                <p className="text-red-500">Cancelled on {formatDateToLocal(cancellation.cancelled_at, true)} by {cancellation.cancelled_by}</p>
+                            </div>
                             {cancellation.revoked_at &&
-                                <p className="text-green-500">Revoked on {formatDateToLocal(cancellation.revoked_at, true)} by {cancellation.revoked_by}</p>
+                                <div className="flex flex-row gap-2 ml-4">
+                                    <ArrowUturnDownIcon className="w-4 pt-1" color="green" />
+                                    <p className="text-green-500">Revoked on {formatDateToLocal(cancellation.revoked_at, true)} by {cancellation.revoked_by}</p>
+                                </div>
                             }
                         </div>
                     ))}
