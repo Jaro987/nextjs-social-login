@@ -72,6 +72,8 @@ const Calendar = ({ events = [], addEvent, cancelEvent, revokeEvent }: Props) =>
         const myEvent = calendarEvent?.extendedProps?.myEvent;
         const image_url = calendarEvent?.extendedProps?.image_url;
         const status = calendarEvent?.extendedProps?.status;
+        const title = calendarEvent?.title;
+        const date = calendarEvent?.startStr;
         return show && status === EventStatus.CANCELLED ? ( // TODO: join 'show && status === EventStatus.CANCELLED' and 'show || myEvent' ???
             <div className={`
                 text-center pt-1 md:p-2 relative
@@ -81,24 +83,28 @@ const Calendar = ({ events = [], addEvent, cancelEvent, revokeEvent }: Props) =>
                     className="mx-auto rounded-full border-2 border-gray-300"
                     width={28}
                     height={28}
-                    alt={`${calendarEvent.title}'s profile picture`}
+                    alt={`${title}'s profile picture`}
                 />
-                <p className='text-[10px] md:text-base whitespace-pre-line truncate'>{calendarEvent.title}</p>
+                <p className='text-[10px] md:text-base whitespace-pre-line truncate'>{title}</p>
+                <div className="absolute inset-0 bg-black/50 rounded"></div>
                 <div className='absolute top-[32px] left-0 -rotate-45 text-rose-600 border-2 border-rose-600 rounded bg-black/50'>CANCELLED</div>
+
             </div>
         ) :
             show || myEvent ? (
                 <div className={`
-                text-center pt-1 md:p-2
+                text-center pt-1 md:p-2 relative
             `}>
                     <Image
                         src={image_url}
                         className="mx-auto rounded-full border-2 border-gray-300"
                         width={28}
                         height={28}
-                        alt={`${calendarEvent.title}'s profile picture`}
+                        alt={`${title}'s profile picture`}
                     />
-                    <p className='text-[10px] md:text-base whitespace-pre-line truncate'>{calendarEvent.title}</p>
+                    <p className='text-[10px] md:text-base whitespace-pre-line truncate'>{title}</p>
+                    {date && date <= new Date().toISOString().split('T')[0] && <div className="absolute inset-0 bg-black/50 rounded"></div>}
+
                 </div>
             ) : (
                 <div className={`

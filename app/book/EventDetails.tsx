@@ -92,11 +92,15 @@ const EventDetails = ({ open, setOpen, event, cancelEvent, revokeEvent }: Props)
     }
 
     const bookingFooter = () => {
+        const isPastEvent = event?.startStr && event?.startStr <= new Date().toISOString().split('T')[0];
+        if (isPastEvent) {
+            return <></>
+        }
         if ((myEvent || show) && status === EventStatus.ACTIVE) {
 
             return (
                 <DialogFooter>
-                    <Button variant="destructive" onClick={() => deleteEvent(id || '')}>Cancel Booking</Button>
+                    <Button variant="destructive" onClick={() => deleteEvent(id || '')}>Cancel Reservation</Button>
                 </DialogFooter>)
         } else if (show && status === EventStatus.CANCELLED) {
             return (
