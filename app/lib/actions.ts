@@ -256,23 +256,46 @@ export async function deactivateEvent(id: string, date: number) {
 export async function activateEvent(id: string, date: number) {
     const session = await auth();
     const revoker = await getUserByEmail(session?.user?.email as string);
-    // TODO: check if there is a reservation for that day, if there is - it can't be activated
     try {
+        const res = await sql`
+        SELECT date
+        FROM calendar_events
+        WHERE id = ${id};
+        `
+
+        const activeEvent = await sql`
+        SELECT *
+        FROM calendar_events
+        WHERE date = ${res.rows[0].date} AND status = ${EventStatus.ACTIVE};
+        `
+
+        if (activeEvent.rowCount > 0) {
+            return { success: false, message: 'Date already booked.' };
+        }
+
+    } catch (error) {
+        return { success: false, message: 'Database Error: Failed to Revoke Event.' };
+    }
+    try {
+        await sql`BEGIN`;
         await sql`
             UPDATE calendar_events
             SET status = ${EventStatus.ACTIVE}
             WHERE id = ${id};
-          `;
+        `;
         await sql`
             UPDATE cancellation
             SET revoked_at = ${new Date(date).toISOString()}, revoked_by = ${revoker?.id}
             WHERE event_id = ${id} AND revoked_at IS NULL AND revoked_by IS NULL;
-          `;
+        `;
+        await sql`COMMIT`;
         revalidatePath('/book');
-        return { message: 'Revoked Event.' };
-    } catch (error) {
-        console.log({ error });
+        return { success: true, message: 'Event Successfully Revoked.' };
 
-        return { message: 'Database Error: Failed to Revoke Event.' };
+    } catch (error) {
+        await sql`ROLLBACK`;
+        return { success: false, message: 'Database Error: Failed to Revoke Event.' };
     }
+
+
 }

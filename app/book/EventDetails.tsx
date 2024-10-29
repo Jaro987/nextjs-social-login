@@ -4,13 +4,14 @@ import Image from "next/image";
 import { CalendarEventObj, EventStatus } from "../lib/definitions";
 import { formatDateToLocal } from "../lib/utils";
 import { ArrowUturnDownIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import { toast } from "sonner";
 
 type Props = {
     open: boolean
     setOpen: (open: boolean) => void,
     event?: CalendarEventObj
     cancelEvent: (id: string, date: number) => Promise<{ message: string }>
-    revokeEvent: (id: string, date: number) => Promise<{ message: string }>
+    revokeEvent: (id: string, date: number) => Promise<{ success: boolean; message: string }>
 }
 
 const EventDetails = ({ open, setOpen, event, cancelEvent, revokeEvent }: Props) => {
@@ -78,7 +79,15 @@ const EventDetails = ({ open, setOpen, event, cancelEvent, revokeEvent }: Props)
     }
 
     const undoDelete = async (id: string) => {
-        await revokeEvent(id, Date.now());
+        const r = await revokeEvent(id, Date.now());
+
+        if (r.success) {
+            toast.success(r.message);
+        } else {
+            toast.error(r.message, {
+                description: 'Please try again later or contact your host.'
+            });
+        }
         setOpen(false);
     }
 
