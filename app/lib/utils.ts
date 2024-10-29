@@ -8,15 +8,25 @@ export const formatCurrency = (amount: number) => {
 };
 
 export const formatDateToLocal = (
-  dateStr: string,
+  dateStr: string | undefined | null,
+  withTime: boolean = false,
   locale: string = 'en-US',
 ) => {
+  if (!dateStr) {
+    return '';
+  }
   const date = new Date(dateStr);
   const options: Intl.DateTimeFormatOptions = {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
   };
+
+  if (withTime) {
+    options.hour = 'numeric';
+    options.minute = 'numeric';
+    options.second = 'numeric';
+  }
   const formatter = new Intl.DateTimeFormat(locale, options);
   return formatter.format(date);
 };

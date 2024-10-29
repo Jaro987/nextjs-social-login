@@ -11,7 +11,7 @@ import { createUser } from './app/lib/actions';
 import { getRandomColor } from './app/lib/utils';
 
 
-export async function getUser(email: string): Promise<User | undefined> {
+export async function getUserByEmail(email: string): Promise<User | undefined> {
     try {
         const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
         return user.rows[0];
@@ -23,7 +23,7 @@ export async function getUser(email: string): Promise<User | undefined> {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function createUserIfNotExists(profile: any) {
-    const user = await getUser(profile.email);
+    const user = await getUserByEmail(profile.email);
     if (!user) {
         const userData = new FormData();
         userData.append('name', profile.name);
@@ -55,7 +55,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         Facebook({
             async profile(profile) {
                 await createUserIfNotExists({ ...profile, password: 'facebook' });
-                const user = await getUser(profile.email);
+                const user = await getUserByEmail(profile.email);
                 return {
                     name: profile.name,
                     email: profile.email,
@@ -67,7 +67,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         Google({
             async profile(profile) {
                 await createUserIfNotExists({ ...profile, password: 'google' });
-                const user = await getUser(profile.email);
+                const user = await getUserByEmail(profile.email);
                 return {
                     name: profile.name,
                     email: profile.email,
@@ -84,7 +84,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
                 if (parsedCredentials.success) {
                     const { email, password } = parsedCredentials.data;
-                    const user = await getUser(email);
+                    const user = await getUserByEmail(email);
                     if (!user) return null;
                     const passwordsMatch = await bcrypt.compare(password, user.password);
                     if (passwordsMatch) return {

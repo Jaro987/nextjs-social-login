@@ -128,7 +128,8 @@ export type CalendarEventObj = {
     phone: string,
     show: boolean,
     myEvent: boolean,
-    cancellations: Cancellation[] | null
+    cancellations: Cancellation[] | null,
+    status: EventStatus
   }
 }
 

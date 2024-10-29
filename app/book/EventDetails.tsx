@@ -1,32 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { DialogHeader, Dialog, DialogContent, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import Image from "next/image";
-import { CalendarEventObj } from "../lib/definitions";
+import { CalendarEventObj, EventStatus } from "../lib/definitions";
+import { formatDateToLocal } from "../lib/utils";
 
 type Props = {
     open: boolean
     setOpen: (open: boolean) => void,
     event?: CalendarEventObj
-    cancelEvent: (id: string, date: number) => Promise<{ message: string }>;
+    cancelEvent: (id: string, date: number) => Promise<{ message: string }>
+    revokeEvent: (id: string, date: number) => Promise<{ message: string }>
 }
 
-const EventDetails = ({ open, setOpen, event, cancelEvent }: Props) => {
+const EventDetails = ({ open, setOpen, event, cancelEvent, revokeEvent }: Props) => {
     const { id, title, startStr, backgroundColor, extendedProps } = event || {};
-    const { image_url, email, phone, show, myEvent, cancellations } = extendedProps || {};
-
-    const formatDate = (dateStr?: string) => {
-        if (!dateStr) {
-            return '';
-        }
-        const options: Intl.DateTimeFormatOptions = {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        };
-        return new Intl.DateTimeFormat('en-US', options).format(new Date(dateStr));
-
-    }
+    const { image_url, email, phone, show, myEvent, cancellations, status } = extendedProps || {};
 
     const bookingDetails = () => {
         if (show) {
@@ -42,12 +30,15 @@ const EventDetails = ({ open, setOpen, event, cancelEvent }: Props) => {
                         </div>
                     </div >
                     <p className="font-bold">Date:</p>
-                    <p>{formatDate(startStr)}</p>
+                    <p>{formatDateToLocal(startStr)}</p>
                     {/* TODO: format this UI nicely */}
+                    {cancellations && cancellations?.length > 0 && <p className="font-bold">History:</p>}
                     {cancellations?.map((cancellation) => (
-                        <div key={cancellation.cancelled_at}>
-                            <p>{cancellation.cancelled_at}</p>
-                            <p>{cancellation.cancelled_by}</p>
+                        <div key={cancellation.cancelled_at} className="flex flex-col">
+                            <p className="text-red-500">Cancelled on {formatDateToLocal(cancellation.cancelled_at, true)} by {cancellation.cancelled_by}</p>
+                            {cancellation.revoked_at &&
+                                <p className="text-green-500">Revoked on {formatDateToLocal(cancellation.revoked_at, true)} by {cancellation.revoked_by}</p>
+                            }
                         </div>
                     ))}
                 </>
@@ -66,7 +57,7 @@ const EventDetails = ({ open, setOpen, event, cancelEvent }: Props) => {
                         </div>
                     </div >
                     <p className="font-bold">Date:</p>
-                    <p>{formatDate(startStr)}</p>
+                    <p>{formatDateToLocal(startStr)}</p>
                 </>
             )
         }
@@ -80,12 +71,22 @@ const EventDetails = ({ open, setOpen, event, cancelEvent }: Props) => {
         setOpen(false);
     }
 
+    const undoDelete = async (id: string) => {
+        await revokeEvent(id, Date.now());
+        setOpen(false);
+    }
+
     const bookingFooter = () => {
-        if (myEvent || show) {
+        if ((myEvent || show) && status === EventStatus.ACTIVE) {
 
             return (
                 <DialogFooter>
                     <Button variant="destructive" onClick={() => deleteEvent(id || '')}>Cancel Booking</Button>
+                </DialogFooter>)
+        } else if (show && status === EventStatus.CANCELLED) {
+            return (
+                <DialogFooter>
+                    <Button className="text-white bg-green-500" onClick={() => undoDelete(id || '')}>Revoke Event</Button>
                 </DialogFooter>)
         }
     }

@@ -27,9 +27,10 @@ interface Props {
         errors?: undefined;
     }>,
     cancelEvent: (id: string, date: number) => Promise<{ message: string }>
+    revokeEvent: (id: string, date: number) => Promise<{ message: string }>
 }
 
-const Calendar = ({ events = [], addEvent, cancelEvent }: Props) => {
+const Calendar = ({ events = [], addEvent, cancelEvent, revokeEvent }: Props) => {
 
     const [open, setOpen] = useState(false);
     const [date, setDate] = useState('');
@@ -109,7 +110,7 @@ const Calendar = ({ events = [], addEvent, cancelEvent }: Props) => {
 
             />
             <ConfirmCreateEvent open={open} setOpen={setOpen} date={date} addEvent={addEvent} />
-            <EventDetails open={detailsOpen} setOpen={setDetailsOpen} event={event} cancelEvent={cancelEvent} />
+            <EventDetails open={detailsOpen} setOpen={setDetailsOpen} event={event} cancelEvent={cancelEvent} revokeEvent={revokeEvent} />
         </>
     )
 }

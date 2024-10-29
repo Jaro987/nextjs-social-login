@@ -8,7 +8,7 @@ import { date, z } from 'zod';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 import { CreateEventError, EventStatus, UserRole } from './definitions';
-import { auth, getUser } from '@/auth';
+import { auth, getUserByEmail } from '@/auth';
 
 export async function authenticate(
     prevState: string | undefined,
@@ -230,9 +230,9 @@ export async function createEvent(formData: FormData) {
 
 }
 
-export async function deleteEvent(id: string, date: number) {
+export async function deactivateEvent(id: string, date: number) {
     const session = await auth();
-    const canceller = await getUser(session?.user?.email as string);
+    const canceller = await getUserByEmail(session?.user?.email as string);
 
     try {
         await sql`
@@ -253,9 +253,9 @@ export async function deleteEvent(id: string, date: number) {
     }
 }
 
-export async function revokeEvent(id: string, date: number) {
+export async function activateEvent(id: string, date: number) {
     const session = await auth();
-    const revoker = await getUser(session?.user?.email as string);
+    const revoker = await getUserByEmail(session?.user?.email as string);
 
     try {
         await sql`

@@ -223,6 +223,7 @@ export async function fetchAllCalendarEvents() {
       SELECT 
         ce.id AS event_id, 
         ce.date, 
+        ce.status,
         u.id AS user_id, 
         u.name, 
         u.email, 
@@ -241,12 +242,13 @@ export async function fetchAllCalendarEvents() {
   }
 }
 
-export async function fetchAllCalendarEventsForAdmin() {
+export async function fetchAllCalendarEventsForAdminOrHost() {
   try {
     const data = await sql<CalendarEvent>`
       SELECT
           ce.id AS event_id, 
-          ce.date, 
+          ce.date,
+          ce.status,
           u.id AS user_id, 
           u.name, 
           u.email, 
@@ -255,10 +257,12 @@ export async function fetchAllCalendarEventsForAdmin() {
           COALESCE(
               jsonb_agg(
                   jsonb_build_object(
-                'id', c.id,
-              'event_id', c.event_id,
-              'cancelled_by', c.cancelled_by,
-              'cancelled_at', c.cancelled_at
+                    'id', c.id,
+                    'event_id', c.event_id,
+                    'cancelled_by', cu.name,
+                    'cancelled_at', c.cancelled_at,
+                    'revoked_by', cu.name,
+                    'revoked_at', c.revoked_at
                   )
               ) FILTER (WHERE c.id IS NOT NULL), 
               '[]'::jsonb
@@ -266,6 +270,7 @@ export async function fetchAllCalendarEventsForAdmin() {
       FROM calendar_events ce
       JOIN users u ON ce.user_id = u.id
       LEFT JOIN cancellation c ON ce.id = c.event_id
+      left join users cu on c.cancelled_by = cu.id
       GROUP BY ce.id, u.id;
     `;
 
