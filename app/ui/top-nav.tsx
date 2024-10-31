@@ -5,6 +5,7 @@ import { auth, signOut } from "@/auth";
 import Image from "next/image";
 import Link from "next/link";
 import MobileMenu from "./MobileMenu";
+import { UserRole } from "../lib/definitions";
 
 const color = "#fff"
 
@@ -13,8 +14,8 @@ export async function TopNav() {
 
     return (
         <div className="flex flex-row items-center justify-between w-full text-[#fff]">
-            <Navigation color={color} />
-            <MobileMenu color={color} />
+            <Navigation color={color} isAdminOrHost={session?.user?.role === UserRole.ADMIN || session?.user?.role === UserRole.HOST} />
+            <MobileMenu color={color} isAdminOrHost={session?.user?.role === UserRole.ADMIN || session?.user?.role === UserRole.HOST} />
             {session?.user ?
                 <div className="flex items-center">
                     <Image
