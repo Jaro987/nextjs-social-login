@@ -87,7 +87,7 @@ const Calendar = ({ events = [], addEvent, cancelEvent, revokeEvent }: Props) =>
                 />
                 <p className='text-[10px] md:text-base whitespace-pre-line truncate'>{title}</p>
                 <div className="absolute inset-0 bg-black/50 rounded"></div>
-                <div className='absolute top-[32px] left-0 -rotate-45 text-rose-600 border-2 border-rose-600 rounded bg-black/50'>CANCELLED</div>
+                <div className='absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] text-rose-600 border-2 border-rose-600 rounded bg-black/50'>CANCELLED</div>
 
             </div>
         ) :

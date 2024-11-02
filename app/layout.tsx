@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <AuthContext>
       <html lang="en">
-        <body className={`${inter.className} antialiased bg-[url('/hero-image.jpg')] bg-cover bg-center backdrop-brightness-75`}>
+        <body className={`${inter.className} antialiased bg-[url('/hero-image.jpg')] bg-cover bg-center bg-fixed backdrop-brightness-75`}>
           <div className="flex flex-col items-center justify-between p-4 md:p-8">
             <TopNav />
             <p className="text-[42px] md:text-[72px] font-bold text-white text-center">A frame pool house</p>
