@@ -16,7 +16,7 @@ export async function TopNav() {
         <div className="flex flex-row items-center justify-between w-full text-[#fff]">
             <Navigation color={color} isAdminOrHost={session?.user?.role === UserRole.ADMIN || session?.user?.role === UserRole.HOST} />
             <MobileMenu color={color} isAdminOrHost={session?.user?.role === UserRole.ADMIN || session?.user?.role === UserRole.HOST} />
-            <div className="w-[15%] align-left">
+            <div className="align-left">
                 {session?.user ?
                     <div className="flex items-center">
                         <Image
@@ -30,9 +30,9 @@ export async function TopNav() {
                             <p className="truncate text-sm font-semibold md:text-base">
                                 {session.user.name}
                             </p>
-                            <p className="hidden text-sm sm:block">
+                            {/* <p className="hidden text-sm sm:block">
                                 {session.user.email}
-                            </p>
+                            </p> */}
                             <form
                                 action={async () => {
                                     'use server';

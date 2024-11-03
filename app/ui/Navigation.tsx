@@ -17,9 +17,9 @@ export default function Navigation({ color, isAdminOrHost }: { color: string, is
         <NavigationMenu className="hidden md:block">
             <NavigationMenuList className="flex flex-row items-center justify-between gap-[60px] xl:gap-[120px]">
                 <NavigationMenuItem>
-                    <Link href="/help" legacyBehavior passHref>
-                        <NavigationMenuLink className={navigationMenuTriggerStyle("/help")}>
-                            Help
+                    <Link href="/" legacyBehavior passHref>
+                        <NavigationMenuLink className={navigationMenuTriggerStyle("/")}>
+                            Home
                         </NavigationMenuLink>
                     </Link>
                 </NavigationMenuItem>

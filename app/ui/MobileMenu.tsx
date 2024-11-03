@@ -29,9 +29,9 @@ export default function MobileMenu({ color, isAdminOrHost }: { color: string, is
                         <NavigationMenu >
                             <NavigationMenuList className="flex flex-col items-center justify-between gap-4">
                                 <NavigationMenuItem>
-                                    <Link href="/help" legacyBehavior passHref aria-disabled={true}>
-                                        <NavigationMenuLink className={navigationMenuTriggerStyle("/help")} onClick={() => handleOpenChange(false)}>
-                                            Help
+                                    <Link href="/" legacyBehavior passHref aria-disabled={true}>
+                                        <NavigationMenuLink className={navigationMenuTriggerStyle("/")} onClick={() => handleOpenChange(false)}>
+                                            Home
                                         </NavigationMenuLink>
                                     </Link>
                                 </NavigationMenuItem>
