@@ -23,7 +23,7 @@ export default function MobileMenu({ color, isAdminOrHost }: { color: string, is
                 <Bars3Icon className="block md:hidden w-12" />
             </SheetTrigger>
             <SheetTitle></SheetTitle>
-            <SheetContent side={'top'} className="bg-black/50 border-0">
+            <SheetContent showXButton={false} side={'top'} className="bg-black/50 border-0">
                 <SheetHeader>
                     <SheetDescription>
                         <NavigationMenu >
