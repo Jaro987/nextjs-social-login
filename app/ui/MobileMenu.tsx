@@ -1,5 +1,5 @@
 'use client'
-import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetDescription, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetDescription, SheetTitle, SheetClose } from "@/components/ui/sheet";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from "@radix-ui/react-navigation-menu";
 import Link from "next/link";
@@ -23,7 +23,7 @@ export default function MobileMenu({ color, isAdminOrHost }: { color: string, is
                 <Bars3Icon className="block md:hidden w-12" />
             </SheetTrigger>
             <SheetTitle></SheetTitle>
-            <SheetContent showXButton={false} side={'top'} className="bg-black/50 border-0">
+            <SheetContent side={'top'} className="bg-black/50 border-0">
                 <SheetHeader>
                     <SheetDescription>
                         <NavigationMenu >
@@ -60,8 +60,9 @@ export default function MobileMenu({ color, isAdminOrHost }: { color: string, is
                         </NavigationMenu>
                     </SheetDescription>
                 </SheetHeader>
+                <SheetClose className="js-hide" />
             </SheetContent>
         </Sheet>
 
     )
-}
+}// focus:outline-none focus:ring-0 focus:ring-none dark:focus:ring-none
