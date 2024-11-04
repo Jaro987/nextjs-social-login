@@ -30,9 +30,6 @@ export async function TopNav() {
                             <p className="truncate text-sm font-semibold md:text-base">
                                 {session.user.name}
                             </p>
-                            {/* <p className="hidden text-sm sm:block">
-                                {session.user.email}
-                            </p> */}
                             <form
                                 action={async () => {
                                     'use server';

@@ -65,4 +65,4 @@ export default function MobileMenu({ color, isAdminOrHost }: { color: string, is
         </Sheet>
 
     )
-}// focus:outline-none focus:ring-0 focus:ring-none dark:focus:ring-none
+}
