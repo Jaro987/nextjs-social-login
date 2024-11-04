@@ -1,9 +1,12 @@
+
+'use client';
 import { inter, oranienbaum } from '@/app/ui/fonts';
 import Bed from './ui/icons/Bed';
 import More from './ui/icons/More';
 import Parking from './ui/icons/Parking';
 import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerFooter, DrawerClose } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
+import { useEffect } from 'react';
 
 const amenities = [
   {
@@ -17,14 +20,10 @@ const amenities = [
 
 ]
 
-export default async function Page() {
-  const headerHeight = {
-    web: 214,
-    mobile: 177,
-    underMobile: 261
-  };
+export default function Page() {
 
-  const renderAmenities = () => {
+  //TODO: revert to server component, pull code out to a client component
+  const renderAmenities = () => { //TODO: usememo
     return (
       <>
         {amenities.map((amenity) => {
@@ -66,11 +65,36 @@ export default async function Page() {
         </div></>)
   }
 
-  //h-[calc(100vh-${headerHeight.mobile}px)] md:h-[calc(100vh-${headerHeight.web}px)]
+  useEffect(() => {
+    const headerHeight = {
+      web: 233,
+      mobile: 261,
+    };
+    const paddingY = 48;
+    const mediaQuery = window.matchMedia("(min-width: 768px)");
+
+    const setHeight = () => {
+      const myDiv = document.getElementById("myDiv");
+      if (myDiv) myDiv.style.height = mediaQuery.matches
+        ? `calc(100vh - ${headerHeight.web}px - ${paddingY}px)`
+        : `calc(100vh - ${headerHeight.mobile}px - ${paddingY}px)`;
+    };
+
+    setHeight();
+    mediaQuery.addEventListener("change", setHeight);
+
+    return () => {
+      mediaQuery.removeEventListener("change", setHeight);
+    };
+  }, []);
+
   return (
-    <main className={`flex flex-col p-6 text-white bg-gradient-to-t from-black via-transparent to-transparent h-[calc(500px-${headerHeight.underMobile}px)]`}>
-      <div className={`flex flex-col-reverse items-center justify-between gap-2 h-full`}>
-        <div className='flex flex-col md:flex-row gap-[40px] mt-auto mb-0'>
+    <main className={`flex flex-col p-6 text-white bg-gradient-to-t from-black via-transparent to-transparent`}>
+      <div
+        id='myDiv'
+        className={`flex flex-col items-center justify-end`}
+      >
+        <div className='flex flex-col md:flex-row gap-[40px]'>
           <div>
             <div className='flex flex-row items-end self-start'>
               <p className='text-gray-400 mr-2'>from</p>
@@ -84,7 +108,6 @@ export default async function Page() {
             {renderAmenities()}
           </div>
         </div>
-        <div ></div>
       </div>
     </main>
   );

@@ -25,7 +25,7 @@ export default function RootLayout({
         <body className={`${inter.className} antialiased bg-[url('/hero-image.jpg')] bg-cover bg-center bg-fixed backdrop-brightness-75`}>
           <div className="flex flex-col items-center justify-between p-4 md:p-8">
             <TopNav />
-            <p className={`${oranienbaum.className} text-[56px] md:text-[72px] font-bold text-white text-center`}>A frame pool house</p>
+            <p className={`${oranienbaum.className} text-[56px] md:text-[72px] font-bold text-white text-center w-[320px] md:w-full`}>A frame pool house</p>
           </div>
           {children}
         </body>
