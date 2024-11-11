@@ -51,53 +51,56 @@ export default function UsersOverview({ users }: { users?: CalendarUser[] }) {
                                 </div>
                                 <div className="space-y-4 pl-14">
                                     {user.events.length > 0 ? (
-                                        user.events.map((event) => (
-                                            <AccordionItem value={event.event_id}
-                                                key={event.event_id}
-                                                className="rounded-lg border px-3 text-sm"
-                                            >
-                                                <AccordionTrigger className="flex font-medium hover:no-underline">
-                                                    <div className="flex items-center justify-start gap-2">
-                                                        <CalendarDays className="h-4 w-4" />
-                                                        {new Date(event.date).toLocaleDateString()}
-                                                        <Badge
-                                                            variant={event.status === "cancelled" ? "destructive" : "default"}
-                                                            className="ml-2"
-                                                        >
-                                                            {event.status}
-                                                        </Badge>
-                                                    </div>
-                                                </AccordionTrigger>
-                                                <AccordionContent>
-                                                    {event.cancellations && event.cancellations.length > 0 && (
-                                                        <div className="mt-2 space-y-2">
-                                                            {event.cancellations.map((cancellation, index) => (
-                                                                <div key={index} className="flex flex-col gap-2 text-muted-foreground">
-                                                                    {cancellation.cancelled_at && (
-                                                                        <div className="flex items-center gap-2 ml-2">
-                                                                            <XCircle className="h-4 w-4 text-red-500" /> <span>{`Cancelled by ${cancellation.cancelled_by} on ${new Date(
-                                                                                cancellation.cancelled_at!
-                                                                            ).toLocaleDateString()}`}</span>
-                                                                        </div>
-                                                                    )}
-                                                                    {cancellation.revoked_at && (
-                                                                        <div className="flex items-center gap-2 ml-4">
-                                                                            <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                                                            <span>
-                                                                                {`Revoked by ${cancellation.revoked_by} on ${new Date(
-                                                                                    cancellation.revoked_at!
-                                                                                ).toLocaleDateString()}`}
-                                                                            </span>
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            ))}
+                                        user.events.map((event) => {
+                                            const status = event.status === "cancelled" ? "cancelled" : new Date(event.date).getTime() < new Date().getTime() ? "fulfilled" : "active";
+                                            return (
+                                                <AccordionItem value={event.event_id}
+                                                    key={event.event_id}
+                                                    className="rounded-lg border px-3 text-sm"
+                                                >
+                                                    <AccordionTrigger className="flex font-medium hover:no-underline">
+                                                        <div className="flex items-center justify-start gap-2">
+                                                            <CalendarDays className="h-4 w-4" />
+                                                            {new Date(event.date).toLocaleDateString()}
+                                                            <Badge
+                                                                variant={status === "cancelled" ? "destructive" : status === "fulfilled" ? "success" : "default"}
+                                                                className="ml-2"
+                                                            >
+                                                                {status}
+                                                            </Badge>
                                                         </div>
-                                                    )}
-                                                </AccordionContent>
+                                                    </AccordionTrigger>
+                                                    <AccordionContent>
+                                                        {event.cancellations && event.cancellations.length > 0 && (
+                                                            <div className="mt-2 space-y-2">
+                                                                {event.cancellations.map((cancellation, index) => (
+                                                                    <div key={index} className="flex flex-col gap-2 text-muted-foreground">
+                                                                        {cancellation.cancelled_at && (
+                                                                            <div className="flex items-center gap-2 ml-2">
+                                                                                <XCircle className="h-4 w-4 text-red-500" /> <span>{`Cancelled by ${cancellation.cancelled_by} on ${new Date(
+                                                                                    cancellation.cancelled_at!
+                                                                                ).toLocaleDateString()}`}</span>
+                                                                            </div>
+                                                                        )}
+                                                                        {cancellation.revoked_at && (
+                                                                            <div className="flex items-center gap-2 ml-4">
+                                                                                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                                                                                <span>
+                                                                                    {`Revoked by ${cancellation.revoked_by} on ${new Date(
+                                                                                        cancellation.revoked_at!
+                                                                                    ).toLocaleDateString()}`}
+                                                                                </span>
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </AccordionContent>
 
-                                            </AccordionItem>
-                                        ))
+                                                </AccordionItem>
+                                            )
+                                        })
                                     ) : (
                                         <div className="text-sm text-muted-foreground">No events found</div>
                                     )}
