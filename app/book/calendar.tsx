@@ -11,6 +11,7 @@ import { LockClosedIcon } from '@heroicons/react/24/outline';
 import EventDetails from './EventDetails'
 import { CalendarEvent, CalendarEventObj, EventStatus } from '../lib/definitions'
 import { EventClickArg, EventContentArg } from '@fullcalendar/core/index.js'
+import { Badge } from '@/components/ui/badge'
 
 interface Props {
     events: Partial<CalendarEvent>[]
@@ -87,8 +88,9 @@ const Calendar = ({ events = [], addEvent, cancelEvent, revokeEvent }: Props) =>
                 />
                 <p className='text-[10px] md:text-base whitespace-pre-line truncate'>{title}</p>
                 <div className="absolute inset-0 bg-black/50 rounded"></div>
-                <div className='absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] text-rose-600 border-2 border-rose-600 rounded bg-black/50'>CANCELLED</div>
-
+                <div className='absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'>
+                    <Badge className="text-[5px] md:text-sm p-1" variant="destructive">CANCELLED</Badge>
+                </div>
             </div>
         ) :
             show || myEvent ? (
