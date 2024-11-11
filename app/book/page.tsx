@@ -3,7 +3,7 @@ import Calendar from './calendar';
 import { Card, CardContent } from '@/components/ui/card';
 import { fetchAllCalendarEvents, fetchAllCalendarEventsForAdminOrHost } from '../lib/data';
 import { Suspense } from 'react';
-import { activateEvent, createEvent, deactivateEvent } from '../lib/actions';
+import { activateEvent, createEvent, createInvoice, deactivateEvent } from '../lib/actions';
 import { auth, getUserByEmail } from '@/auth';
 import { CalendarEvent, UserRole } from '../lib/definitions';
 
@@ -39,6 +39,13 @@ export default async function Page() {
         eventData.append('user_id', user?.id as string);
         eventData.append('date', date);
         const e = await createEvent(eventData);
+        const invoiceData = new FormData();
+        invoiceData.append('customerId', user?.id as string);
+        invoiceData.append('amount', '180'); // TODO: change to dynamic value from form on home page (configurator) or confirm-crete-event popup (add that UI)
+        invoiceData.append('status', 'pending');
+        const r = await createInvoice({}, invoiceData)
+        console.log(r);
+
         return e;
 
     }

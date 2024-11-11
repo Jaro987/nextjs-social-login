@@ -31,11 +31,12 @@ export async function fetchRevenue() {
 }
 
 export async function fetchLatestInvoices() {
+  //TODO: alter table invoices - switch to users instead of customers
   try {
     const data = await sql<LatestInvoiceRaw>`
-      SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
+      SELECT invoices.amount, users.name, users.image_url, users.email, invoices.id
       FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
+      JOIN users ON invoices.customer_id = users.id
       ORDER BY invoices.date DESC
       LIMIT 5`;
 
@@ -91,7 +92,7 @@ export async function fetchFilteredInvoices(
   currentPage: number,
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-
+  //TODO: switch to users instead of customers
   try {
     const invoices = await sql<InvoicesTable>`
       SELECT
