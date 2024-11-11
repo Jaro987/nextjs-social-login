@@ -12,6 +12,8 @@ import { CalendarDays, XCircle, CheckCircle2 } from "lucide-react";
 import { CalendarUser } from "@/app/lib/definitions";
 
 export default function UsersOverview({ users }: { users?: CalendarUser[] }) {
+    console.log({ users });
+
     return (
         <div className="flex grow flex-col justify-between rounded-xl bg-black/[0.6] p-4">
             <div className="bg-white/[0.3] px-6">
@@ -58,21 +60,24 @@ export default function UsersOverview({ users }: { users?: CalendarUser[] }) {
                                                 {event.cancellations && event.cancellations.length > 0 && (
                                                     <div className="mt-2 space-y-2">
                                                         {event.cancellations.map((cancellation, index) => (
-                                                            <div key={index} className="flex items-center gap-2 text-muted-foreground">
-                                                                {cancellation.revoked_at ? (
-                                                                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                                                ) : (
-                                                                    <XCircle className="h-4 w-4 text-red-500" />
-                                                                )}
-                                                                <span>
-                                                                    {cancellation.revoked_at
-                                                                        ? `Revoked by ${cancellation.revoked_by} on ${new Date(
-                                                                            cancellation.revoked_at
-                                                                        ).toLocaleDateString()}`
-                                                                        : `Cancelled by ${cancellation.cancelled_by} on ${new Date(
+                                                            <div key={index} className="flex flex-col gap-2 text-muted-foreground">
+                                                                {cancellation.cancelled_at && (
+                                                                    <div className="flex items-center gap-2 ml-2">
+                                                                        <XCircle className="h-4 w-4 text-red-500" /> <span>{`Cancelled by ${cancellation.cancelled_by} on ${new Date(
                                                                             cancellation.cancelled_at!
-                                                                        ).toLocaleDateString()}`}
-                                                                </span>
+                                                                        ).toLocaleDateString()}`}</span>
+                                                                    </div>
+                                                                )}
+                                                                {cancellation.revoked_at && (
+                                                                    <div className="flex items-center gap-2 ml-4">
+                                                                        <CheckCircle2 className="h-4 w-4 text-green-500" />
+                                                                        <span>
+                                                                            {`Revoked by ${cancellation.revoked_by} on ${new Date(
+                                                                                cancellation.revoked_at!
+                                                                            ).toLocaleDateString()}`}
+                                                                        </span>
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                         ))}
                                                     </div>

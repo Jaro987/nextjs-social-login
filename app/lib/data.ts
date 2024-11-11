@@ -309,7 +309,7 @@ export async function fetchAllUsersForAdmin() {
                 )
               )
               FROM Cancellation c
-              WHERE c.event_id = e.user_id
+              WHERE c.event_id = e.id
             )
           )
         ) FILTER (WHERE e.id IS NOT NULL), '[]'
