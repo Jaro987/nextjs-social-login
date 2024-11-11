@@ -1,6 +1,7 @@
 import { sql } from '@vercel/postgres';
 import {
   CalendarEvent,
+  CalendarUser,
   CustomerField,
   CustomersTableType,
   InvoiceForm,
@@ -279,5 +280,52 @@ GROUP BY ce.id, u.id;
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch all events.');
+  }
+}
+
+export async function fetchAllUsersForAdmin() {
+  try {
+    const users = await sql<CalendarUser>`SELECT 
+      u.id AS id,
+      u.name AS name,
+      u.email AS email,
+      u.image_url AS image_url,
+      u.color AS color,
+      u.role AS role,
+      COALESCE(
+        json_agg(
+          json_build_object(
+            'event_id', e.id,
+            'date', e.date,
+            'status', e.status,
+            'cancellations', (
+              SELECT json_agg(
+                json_build_object(
+                  'event_id', c.event_id,
+                  'cancelled_at', c.cancelled_at,
+                  'cancelled_by', c.cancelled_by,
+                  'revoked_at', c.revoked_at,
+                  'revoked_by', c.revoked_by
+                )
+              )
+              FROM Cancellation c
+              WHERE c.event_id = e.user_id
+            )
+          )
+        ) FILTER (WHERE e.id IS NOT NULL), '[]'
+      ) AS events
+    FROM 
+      Users u
+    LEFT JOIN 
+      Calendar_Events e ON u.id = e.user_id
+    GROUP BY 
+      u.id
+    ORDER BY 
+      u.id;`;
+
+    return users.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch users.');
   }
 }
