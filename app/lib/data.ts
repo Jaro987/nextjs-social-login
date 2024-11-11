@@ -303,12 +303,14 @@ export async function fetchAllUsersForAdmin() {
                 json_build_object(
                   'event_id', c.event_id,
                   'cancelled_at', c.cancelled_at,
-                  'cancelled_by', c.cancelled_by,
+                  'cancelled_by', cb.name,
                   'revoked_at', c.revoked_at,
-                  'revoked_by', c.revoked_by
+                  'revoked_by', rb.name
                 )
               )
               FROM Cancellation c
+              LEFT JOIN Users cb ON c.cancelled_by = cb.id
+              LEFT JOIN Users rb ON c.revoked_by = rb.id
               WHERE c.event_id = e.id
             )
           )
