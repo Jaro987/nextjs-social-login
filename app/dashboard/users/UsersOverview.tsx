@@ -79,7 +79,7 @@ export default function UsersOverview({ users }: { users?: CalendarUser[] }) {
                                                                             <div className="flex items-center gap-2 ml-2">
                                                                                 <XCircle className="h-4 w-4 text-red-500" /> <span>{`Cancelled by ${cancellation.cancelled_by} on ${new Date(
                                                                                     cancellation.cancelled_at!
-                                                                                ).toLocaleDateString()}`}</span>
+                                                                                ).toLocaleString()}`}</span>
                                                                             </div>
                                                                         )}
                                                                         {cancellation.revoked_at && (
@@ -88,7 +88,7 @@ export default function UsersOverview({ users }: { users?: CalendarUser[] }) {
                                                                                 <span>
                                                                                     {`Revoked by ${cancellation.revoked_by} on ${new Date(
                                                                                         cancellation.revoked_at!
-                                                                                    ).toLocaleDateString()}`}
+                                                                                    ).toLocaleString()}`}
                                                                                 </span>
                                                                             </div>
                                                                         )}
