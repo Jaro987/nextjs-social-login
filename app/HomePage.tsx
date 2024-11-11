@@ -65,8 +65,8 @@ export default function HomePage() {
 
     useEffect(() => {
         const headerHeight = {
-            web: 233,
-            mobile: 261,
+            web: 214,
+            mobile: 248,
         };
         const paddingY = 48;
         const mediaQuery = window.matchMedia("(min-width: 768px)");
