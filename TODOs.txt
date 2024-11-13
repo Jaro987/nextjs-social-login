@@ -1,0 +1,30 @@
+TODO
+1. Add mailing system to app
+    - for Host (all Hosts) on:
+        - create any new user
+        - edit any existing user
+        - add new event by any user
+        - cancel any event
+        - revoke any event
+    - for User on:
+        - create my profile
+        - edit my profile
+        - create my event
+        - cancel my event
+        - revoke my event
+        - reminder for 7 days before event
+        - reminder for one day before event
+
+2. Add settings page to Dashboard
+    - tenant level: 
+        - bg image
+        - color theme
+        - fonts
+        - checkboxes for amenities (featured and on drawer)
+    - host and user level:
+        - checkboxes for mails
+        - checkboxes for reminders (also mails)
+
+3. Add guests configurator to confirm-create-event popup (add that UI)
+4. Add guests configurator to Home page and persist data to confirm-create-event popup
+5. Add more amenity icons 

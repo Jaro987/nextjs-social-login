@@ -8,7 +8,7 @@ import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerFooter, Drawe
 import { Button } from '@/components/ui/button';
 import { useEffect, useMemo } from 'react';
 
-const amenities = [
+const featuredAmenities = [
     {
         icon: <Bed />,
         name: "Bed"
@@ -25,7 +25,7 @@ export default function HomePage() {
     const amenitiesMemoized = useMemo(() => {
         return (
             <>
-                {amenities.map((amenity) => {
+                {featuredAmenities.map((amenity) => {
                     return (
                         <div key={amenity.name} className="flex flex-col items-center">
                             <div className="bg-transparent p-2 rounded-xl border-2">

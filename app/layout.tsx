@@ -7,11 +7,10 @@ import AuthContext from './AuthContext';
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Acme Dashboard',
-    default: 'Acme Dashboard',
+    template: '%s | rental pool house',
+    default: 'A frame pool house',
   },
-  description: 'The official Next.js Learn Dashboard built with App Router.',
-  metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
+  description: 'rent A frame pool house'
 };
 
 export default function RootLayout({
