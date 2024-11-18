@@ -9,6 +9,7 @@ export type User = {
   password: string;
   role: UserRole;
   image_url: string;
+  phone?: string;
 };
 
 export type Customer = {
@@ -103,6 +104,7 @@ export type CalendarUser = {
   color: string;
   role: UserRole;
   events: CalendarEvent[];
+  phone?: string
 }
 
 export type CalendarEvent = {

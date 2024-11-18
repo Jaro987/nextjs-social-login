@@ -58,6 +58,15 @@ export default function Profile({ user, settings }: Props) {
 
     }
 
+
+    function hasChanges() {
+        return (
+            name !== user.name ||
+            phone !== user.phone ||
+            selectedFile
+        );
+    }
+
     return (
         <div className="flex flex-col lg:flex-row gap-12">
             <div className="flex flex-col gap-4 w-full ">
@@ -68,7 +77,7 @@ export default function Profile({ user, settings }: Props) {
                     <InputWithLabel type="email" id="email" placeholder="Email" value={email} disabled onChange={(e) => setEmail(e.target.value)} />
                     <InputWithLabel type="tel" id="phone" placeholder="Phone number" value={phone} onChange={(e) => setPhone(e.target.value)} />
                 </div>
-                <Button onClick={handleSaveProfileChanges}>Save profile changes</Button>
+                <Button disabled={!hasChanges()} onClick={handleSaveProfileChanges}>Save profile changes</Button>
             </div>
             <div className="flex flex-col gap-4 w-full">
                 <p className="text-2xl font-bold">Settings</p>

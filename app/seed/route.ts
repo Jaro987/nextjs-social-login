@@ -142,6 +142,12 @@ export async function GET() {
 // UPDATE users
 // SET image_url = md5(random()::text) || '.jpg';
 
+// for adding phone number to users:
+// ALTER TABLE users
+// ADD COLUMN phone VARCHAR(255);
+// UPDATE users
+// SET phone = '06' || LPAD((floor(random() * 10000000)::int)::varchar, 7, '0');
+
 // for adding color to users:
 // ALTER TABLE users
 // ADD COLUMN color VARCHAR(255);

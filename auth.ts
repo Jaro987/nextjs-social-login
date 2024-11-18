@@ -43,11 +43,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     ...authConfig,
     callbacks: {
         jwt({ token, user }) {
-            if (user) token.role = user.role
+            if (user) {
+                token.role = user.role;
+                token.phone = user.phone;
+            }
             return token
         },
         session({ session, token }) {
-            session.user.role = token.role
+            session.user.role = token.role;
+            session.user.phone = token.phone;
             return session
         }
     },
@@ -60,7 +64,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     name: profile.name,
                     email: profile.email,
                     image: profile.picture.data.url,
-                    role: user?.role
+                    role: user?.role,
+                    phone: user?.phone
                 };
             }
         }),
@@ -72,7 +77,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     name: profile.name,
                     email: profile.email,
                     image: profile.picture,
-                    role: user?.role
+                    role: user?.role,
+                    phone: user?.phone
                 };
             },
         }),
@@ -91,7 +97,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                         name: user.name,
                         email: user.email,
                         image: user.image_url,
-                        role: user.role
+                        role: user.role,
+                        phone: user.phone
                     };
                 }
 
