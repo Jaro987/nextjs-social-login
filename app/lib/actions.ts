@@ -207,6 +207,54 @@ export async function createUser(formData: FormData) {
     }
 }
 
+const UpdateUserSchema = z.object({
+    name: z.string().optional(),
+    image: z.string().optional(),
+    //add phone
+});
+
+export async function updateUser(userEmail: string, updates: Record<string, unknown>) {
+    // Validate updates object using UpdateUserSchema
+    const validatedFields = UpdateUserSchema.safeParse(updates);
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: 'Invalid Fields. Failed to Update User.',
+        };
+    }
+
+    const { name, image } = validatedFields.data;
+
+    let query = 'UPDATE users SET ';
+
+
+    if (name !== undefined && image === undefined) {
+        query += `name = '${name}'`;
+    } else if (name === undefined && image !== undefined) {
+        query += `image_url = '${image}'`;
+    } else if (name !== undefined && image !== undefined) {
+        query += `name = '${name}', image_url = '${image}'`;
+    }
+    query += ` WHERE email = '${userEmail}';`
+
+    try {
+        console.log(query);
+
+
+        const r = await sql.query(query);
+        return JSON.parse(JSON.stringify(r))
+
+    } catch (error) {
+        console.log(error);
+
+        return {
+            message: 'Database Error: Failed to Update User.',
+        };
+    }
+}
+
+
 const EventSchema = z.object({
     user_id: z.string(),
     date: z.string(),

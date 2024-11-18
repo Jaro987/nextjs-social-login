@@ -28,3 +28,4 @@ TODO
 3. Add guests configurator to confirm-create-event popup (add that UI)
 4. Add guests configurator to Home page and persist data to confirm-create-event popup
 5. Add more amenity icons 
+6. add logger on BE
