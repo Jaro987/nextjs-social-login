@@ -239,18 +239,24 @@ export async function updateUser(userEmail: string, updates: Record<string, unkn
     query += ` WHERE email = '${userEmail}';`
 
     try {
-        console.log(query);
-
-
         const r = await sql.query(query);
-        return JSON.parse(JSON.stringify(r))
+        if (r.rowCount > 0) {
+            return {
+                success: true,
+                message: 'User Updated Successfully.',
+                description: "Log in again to see the changes.",
+            }
+        }
+        return {
+            success: false,
+            message: 'Updating User Failed. Please Try Again.',
+        }
 
     } catch (error) {
-        console.log(error);
-
         return {
-            message: 'Database Error: Failed to Update User.',
-        };
+            success: false,
+            message: 'Updating User Failed. Please Try Again.',
+        }
     }
 }
 

@@ -53,8 +53,18 @@ export default function Profile({ user, settings }: Props) {
         if (name !== user.name) changes.name = name;
         if (phone !== user.phone) changes.phone = phone;
 
-        await updateUser(user.email!, changes);
+        const updatedUser = await updateUser(user.email!, changes);
 
+        if (updatedUser.success) {
+
+            toast.success(updatedUser.message, {
+                description: updatedUser.description,
+            });
+        } else {
+            toast.error(updatedUser.message, {
+                description: updatedUser.description,
+            });
+        }
 
     }
 
