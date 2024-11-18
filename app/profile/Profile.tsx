@@ -73,9 +73,9 @@ export default function Profile({ user, settings }: Props) {
                 <p className="text-2xl font-bold">General info</p>
                 <div className="flex flex-col gap-4">
                     <CustomFileInput initialImage={selectedFile || image} selectedFile={selectedFile} setSelectedFile={setSelectedFile} />
-                    <InputWithLabel type="text" id="name" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
-                    <InputWithLabel type="email" id="email" placeholder="Email" value={email} disabled onChange={(e) => setEmail(e.target.value)} />
-                    <InputWithLabel type="tel" id="phone" placeholder="Phone number" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                    <InputWithLabel type="text" id="name" placeholder="Name" value={name} onChange={setName} />
+                    <InputWithLabel type="email" id="email" placeholder="Email" value={email} disabled onChange={setEmail} />
+                    <InputWithLabel type="tel" id="phone" placeholder="Phone number" value={phone} onChange={setPhone} />
                 </div>
                 <Button disabled={!hasChanges()} onClick={handleSaveProfileChanges}>Save profile changes</Button>
             </div>
