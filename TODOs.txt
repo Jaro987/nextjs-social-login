@@ -21,6 +21,7 @@ TODO
         - color theme
         - fonts
         - checkboxes for amenities (featured and on drawer)
+        - maybe drawer on top level, present on all pages so host can see changes on all pages in real time before saving
     - host and user level: ✓
         - checkboxes for mails ✓
         - checkboxes for reminders (also mails) ✓
@@ -30,4 +31,4 @@ TODO
 5. Add more amenity icons 
 6. add logger on BE
 7. add color change to profile page https://www.npmjs.com/package/react-colorful
-8. on create user, add user settings for that user at the same time
+8. on create user, add user settings for that user at the same time ✓
