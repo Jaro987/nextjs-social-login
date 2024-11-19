@@ -1,4 +1,4 @@
-import { Revenue } from './definitions';
+import { DBUserSettings, Revenue, UserSettings } from './definitions';
 
 export const formatCurrency = (amount: number) => {
   return (amount / 100).toLocaleString('en-US', {
@@ -85,4 +85,19 @@ export function getRandomColor() {
     color += letters[Math.floor(Math.random() * 16)];
   }
   return color;
+}
+
+export function mapDBUserSettingsToUserSettings(settings: DBUserSettings): UserSettings {
+
+  return {
+    id: settings.id,
+    userId: settings.user_id,
+    createProfile: settings.create_profile,
+    editMyProfile: settings.edit_my_profile,
+    createMyEvent: settings.create_my_event,
+    cancelMyEvent: settings.cancel_my_event,
+    revokeMyEvent: settings.revoke_my_event,
+    sevenDayReminder: settings.seven_day_reminder,
+    oneDayReminder: settings.one_day_reminder
+  }
 }

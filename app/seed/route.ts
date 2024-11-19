@@ -193,3 +193,39 @@ export async function GET() {
 
 // INSERT INTO cancellation (event_id, cancelled_at, cancelled_by)
 // VALUES ('ea5dd26b-5281-4a70-93bf-aa811bec9954', '2023-05-01 10:00:00', 'ea5dd26b-5281-4a70-93bf-aa811bec9954')
+
+// CREATE TABLE User_Settings (
+//   id UUID PRIMARY KEY, -- UUID as the unique identifier for the record
+//   user_id UUID NOT NULL, -- Assuming user_id is also a UUID
+//   create_profile BOOLEAN NOT NULL,
+//   edit_my_profile BOOLEAN NOT NULL,
+//   create_my_event BOOLEAN NOT NULL,
+//   cancel_my_event BOOLEAN NOT NULL,
+//   revoke_my_event BOOLEAN NOT NULL,
+//   seven_day_reminder BOOLEAN NOT NULL,
+//   one_day_reminder BOOLEAN NOT NULL,
+//   CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE -- Assumes a Users table exists
+// );
+
+//add into user_settings table
+// INSERT INTO User_Settings (
+//   id, 
+//   user_id, 
+//   create_profile, 
+//   edit_my_profile, 
+//   create_my_event, 
+//   cancel_my_event, 
+//   revoke_my_event, 
+//   seven_day_reminder, 
+//   one_day_reminder
+// ) VALUES (
+//   uuid_generate_v4(),
+//   '1602aba9-8e45-4816-b0ff-8d7961d11600'::UUID,
+//   FALSE,
+//   FALSE,
+//   FALSE,
+//   FALSE,
+//   FALSE,
+//   FALSE,
+//   FALSE
+// );

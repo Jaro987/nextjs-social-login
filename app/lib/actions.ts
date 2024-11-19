@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 import { date, z } from 'zod';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
-import { CreateEventError, EventStatus, UserRole } from './definitions';
+import { CreateEventError, EventStatus, UserRole, UserSettings } from './definitions';
 import { auth, getUserByEmail } from '@/auth';
 
 export async function authenticate(
@@ -210,11 +210,10 @@ export async function createUser(formData: FormData) {
 const UpdateUserSchema = z.object({
     name: z.string().optional(),
     image: z.string().optional(),
-    //add phone
+    phone: z.string().optional(),
 });
 
 export async function updateUser(userEmail: string, updates: Record<string, unknown>) {
-    // Validate updates object using UpdateUserSchema
     const validatedFields = UpdateUserSchema.safeParse(updates);
 
     if (!validatedFields.success) {
@@ -224,19 +223,25 @@ export async function updateUser(userEmail: string, updates: Record<string, unkn
         };
     }
 
-    const { name, image } = validatedFields.data;
+    const { name, image, phone } = validatedFields.data;
 
     let query = 'UPDATE users SET ';
 
 
-    if (name !== undefined && image === undefined) {
-        query += `name = '${name}'`;
-    } else if (name === undefined && image !== undefined) {
-        query += `image_url = '${image}'`;
-    } else if (name !== undefined && image !== undefined) {
-        query += `name = '${name}', image_url = '${image}'`;
+    const fields: string[] = [];
+
+    if (name !== undefined) fields.push(`name = '${name}'`);
+    if (image !== undefined) fields.push(`image_url = '${image}'`);
+    if (phone !== undefined) fields.push(`phone = '${phone}'`);
+
+    if (fields.length === 0) {
+        return {
+            success: false,
+            message: 'No fields to update.',
+        }
     }
-    query += ` WHERE email = '${userEmail}';`
+
+    query += fields.join(', ') + ` WHERE email = '${userEmail}';`
 
     try {
         const r = await sql.query(query);
@@ -380,6 +385,82 @@ export async function activateEvent(id: string, date: number) {
         await sql`ROLLBACK`;
         return { success: false, message: 'Database Error: Failed to Revoke Event.' };
     }
+}
 
 
+export async function createUserSettings({ userId }: { userId?: string }) {
+    try {
+        return await sql`
+        INSERT INTO user_settings (user_id, create_profile, edit_my_profile, create_my_event, cancel_my_event, revoke_my_event, seven_day_reminder, one_day_reminder)
+        VALUES (${userId}, true, true, true, true, true, true, true)
+      `;
+    } catch (error) {
+        return {
+            message: 'Database Error: Failed to Create User.',
+        };
+    }
+}
+
+
+const UpdateUserSettingsSchema = z.object({
+    editMyProfile: z.boolean().optional(),
+    createMyEvent: z.boolean().optional(),
+    cancelMyEvent: z.boolean().optional(),
+    revokeMyEvent: z.boolean().optional(),
+    sevenDayReminder: z.boolean().optional(),
+    oneDayReminder: z.boolean().optional(),
+});
+
+export async function updateUserSettings({ id, newSettings }: { id: string, newSettings: Partial<UserSettings> }) {
+    const validatedFields = UpdateUserSettingsSchema.safeParse(newSettings);
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: 'Invalid Fields. Failed to Update User Settings.',
+        };
+    }
+
+    const { editMyProfile, createMyEvent, cancelMyEvent, revokeMyEvent, sevenDayReminder, oneDayReminder } = validatedFields.data;
+
+    let query = 'UPDATE user_settings SET ';
+
+
+    const fields: string[] = [];
+
+    if (editMyProfile !== undefined) fields.push(`edit_my_profile = '${editMyProfile}'`);
+    if (createMyEvent !== undefined) fields.push(`create_my_event = '${createMyEvent}'`);
+    if (cancelMyEvent !== undefined) fields.push(`cancel_my_event = '${cancelMyEvent}'`);
+    if (revokeMyEvent !== undefined) fields.push(`revoke_my_event = '${revokeMyEvent}'`);
+    if (sevenDayReminder !== undefined) fields.push(`seven_day_reminder = '${sevenDayReminder}'`);
+    if (oneDayReminder !== undefined) fields.push(`one_day_reminder = '${oneDayReminder}'`);
+
+    if (fields.length === 0) {
+        return {
+            success: false,
+            message: 'No fields to update.',
+        }
+    }
+
+    query += fields.join(', ') + ` WHERE id = '${id}';`
+
+    try {
+        const r = await sql.query(query);
+        if (r.rowCount > 0) {
+            return {
+                success: true,
+                message: 'User Settings Updated Successfully.',
+            }
+        }
+        return {
+            success: false,
+            message: 'Updating User Settings Failed. Please Try Again.',
+        }
+
+    } catch (error) {
+        return {
+            success: false,
+            message: 'Updating User Settings Failed. Please Try Again.',
+        }
+    }
 }

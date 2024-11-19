@@ -152,3 +152,27 @@ export type Cancellation = {
   revoked_at: string | null;
   revoked_by: string | null;
 }
+
+export type UserSettings = {
+  id: string;
+  userId: string;
+  createProfile: boolean;
+  editMyProfile: boolean;
+  createMyEvent: boolean;
+  cancelMyEvent: boolean;
+  revokeMyEvent: boolean;
+  sevenDayReminder: boolean;
+  oneDayReminder: boolean;
+}
+
+export type DBUserSettings = {
+  id: string;
+  user_id: string;
+  create_profile: boolean;
+  edit_my_profile: boolean;
+  create_my_event: boolean;
+  cancel_my_event: boolean;
+  revoke_my_event: boolean;
+  seven_day_reminder: boolean;
+  one_day_reminder: boolean;
+}

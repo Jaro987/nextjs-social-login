@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button";
 import { User } from "next-auth";
 import { useState } from "react";
 import { toast } from "sonner";
-import { updateUser } from "../lib/actions";
+import { updateUser, updateUserSettings } from "../lib/actions";
+import { UserSettings } from "../lib/definitions";
 
 type Props = {
     user: User
-    settings: { editProfile: boolean, createEvent: boolean, cancelEvent: boolean, revokeEvent: boolean, sevenDayReminder: boolean, oneDayReminder: boolean };
+    settings: UserSettings;
 };
 
 export default function Profile({ user, settings }: Props) {
@@ -22,10 +23,10 @@ export default function Profile({ user, settings }: Props) {
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
 
-    const [editProfile, setEditProfile] = useState<boolean>(settings.editProfile);
-    const [createEvent, setCreateEvent] = useState<boolean>(settings.createEvent);
-    const [cancelEvent, setCancelEvent] = useState<boolean>(settings.cancelEvent);
-    const [revokeEvent, setRevokeEvent] = useState<boolean>(settings.revokeEvent);
+    const [editMyProfile, setEditMyProfile] = useState<boolean>(settings.editMyProfile);
+    const [createMyEvent, setCreateMyEvent] = useState<boolean>(settings.createMyEvent);
+    const [cancelMyEvent, setCancelMyEvent] = useState<boolean>(settings.cancelMyEvent);
+    const [revokeMyEvent, setRevokeMyEvent] = useState<boolean>(settings.revokeMyEvent);
     const [sevenDayReminder, setSevenDayReminder] = useState<boolean>(settings.sevenDayReminder);
     const [oneDayReminder, setOneDayReminder] = useState<boolean>(settings.oneDayReminder);
 
@@ -40,8 +41,6 @@ export default function Profile({ user, settings }: Props) {
                 body: formData,
             });
             const data = await response.json();
-            console.log({ data });
-
             if (data.success) {
                 changes.image = `/${data.name}`;
             } else {
@@ -77,8 +76,38 @@ export default function Profile({ user, settings }: Props) {
         );
     }
 
+    async function handleSaveSettingsChanges() {
+        const settingsChanges: Partial<UserSettings> = {};
+
+        if (editMyProfile !== settings.editMyProfile) settingsChanges.editMyProfile = editMyProfile;
+        if (createMyEvent !== settings.createMyEvent) settingsChanges.createMyEvent = createMyEvent;
+        if (cancelMyEvent !== settings.cancelMyEvent) settingsChanges.cancelMyEvent = cancelMyEvent;
+        if (revokeMyEvent !== settings.revokeMyEvent) settingsChanges.revokeMyEvent = revokeMyEvent;
+        if (sevenDayReminder !== settings.sevenDayReminder) settingsChanges.sevenDayReminder = sevenDayReminder;
+        if (oneDayReminder !== settings.oneDayReminder) settingsChanges.oneDayReminder = oneDayReminder;
+
+        const updatedUserSettings = await updateUserSettings({ id: settings.id, newSettings: settingsChanges });
+        if (updatedUserSettings.success) {
+
+            toast.success(updatedUserSettings.message);
+        } else {
+            toast.error(updatedUserSettings.message);
+        }
+    }
+
+    function hasSettingsChanges() {
+        return (
+            editMyProfile !== settings.editMyProfile ||
+            createMyEvent !== settings.createMyEvent ||
+            cancelMyEvent !== settings.cancelMyEvent ||
+            revokeMyEvent !== settings.revokeMyEvent ||
+            sevenDayReminder !== settings.sevenDayReminder ||
+            oneDayReminder !== settings.oneDayReminder
+        );
+    }
+
     return (
-        <div className="flex flex-col lg:flex-row gap-12">
+        <div className="flex flex-col lg:flex-row gap-24">
             <div className="flex flex-col gap-4 w-full ">
                 <p className="text-2xl font-bold">General info</p>
                 <div className="flex flex-col gap-4">
@@ -95,29 +124,29 @@ export default function Profile({ user, settings }: Props) {
                 <div className="flex flex-col gap-4">
                     <CheckboxWithText
                         id="editProfile"
-                        onChange={() => setEditProfile(!editProfile)}
-                        checked={editProfile}
+                        onChange={() => setEditMyProfile(!editMyProfile)}
+                        checked={editMyProfile}
                         label="My profile has been updated."
                         description="Receive a mail when your profile has been updated."
                     />
                     <CheckboxWithText
                         id="createEvent"
-                        onChange={() => setCreateEvent(!createEvent)}
-                        checked={createEvent}
+                        onChange={() => setCreateMyEvent(!createMyEvent)}
+                        checked={createMyEvent}
                         label="I create an event."
                         description="Receive a mail when an event has been created."
                     />
                     <CheckboxWithText
                         id="cancelEvent"
-                        onChange={() => setCancelEvent(!cancelEvent)}
-                        checked={cancelEvent}
+                        onChange={() => setCancelMyEvent(!cancelMyEvent)}
+                        checked={cancelMyEvent}
                         label="My event has been canceled."
                         description="Receive a mail when my event has been canceled."
                     />
                     <CheckboxWithText
                         id="revokeEvent"
-                        onChange={() => setRevokeEvent(!revokeEvent)}
-                        checked={revokeEvent}
+                        onChange={() => setRevokeMyEvent(!revokeMyEvent)}
+                        checked={revokeMyEvent}
                         label="My event has been revoked."
                         description="Receive a mail when my event has been revoked."
                     />
@@ -136,7 +165,7 @@ export default function Profile({ user, settings }: Props) {
                         description="Receive a mail one day before an event."
                     />
                 </div>
-                <Button>Save mail settings</Button>
+                <Button disabled={!hasSettingsChanges()} onClick={handleSaveSettingsChanges}>Save mail settings</Button>
             </div>
         </div>
     );

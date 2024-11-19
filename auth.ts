@@ -7,7 +7,7 @@ import { UserRole, User } from '@/app/lib/definitions';
 import bcrypt from 'bcrypt';
 import Google from 'next-auth/providers/google';
 import Facebook from 'next-auth/providers/facebook';
-import { createUser } from './app/lib/actions';
+import { createUser, createUserSettings } from './app/lib/actions';
 import { getRandomColor } from './app/lib/utils';
 
 
@@ -34,6 +34,10 @@ async function createUserIfNotExists(profile: any) {
         userData.append('color', getRandomColor());
 
         const result = await createUser(userData);
+        if ((result as QueryResultRow).rowCount > 0) {
+            const createdUser = await getUserByEmail(profile.email)
+            await createUserSettings({ userId: createdUser?.id })
+        }
         return (result as QueryResultRow).rowCount > 0 ? 'created' : 'existed';
 
     }

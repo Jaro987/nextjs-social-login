@@ -4,10 +4,12 @@ import {
   CalendarUser,
   CustomerField,
   CustomersTableType,
+  DBUserSettings,
   InvoiceForm,
   InvoicesTable,
   LatestInvoiceRaw,
   Revenue,
+  // UserSettings,
 } from './definitions';
 import { formatCurrency } from './utils';
 
@@ -330,5 +332,20 @@ export async function fetchAllUsersForAdmin() {
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch users.');
+  }
+}
+
+export async function fetchSettingsByUserId(id: string) {
+  try {
+    const data = await sql<DBUserSettings>`
+      SELECT
+        *
+      FROM user_settings
+      WHERE user_settings.user_id = ${id};
+    `;
+    return data.rows[0];
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch user settings.');
   }
 }

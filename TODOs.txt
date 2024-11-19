@@ -21,11 +21,13 @@ TODO
         - color theme
         - fonts
         - checkboxes for amenities (featured and on drawer)
-    - host and user level:
-        - checkboxes for mails
-        - checkboxes for reminders (also mails)
+    - host and user level: ✓
+        - checkboxes for mails ✓
+        - checkboxes for reminders (also mails) ✓
 
 3. Add guests configurator to confirm-create-event popup (add that UI)
 4. Add guests configurator to Home page and persist data to confirm-create-event popup
 5. Add more amenity icons 
 6. add logger on BE
+7. add color change to profile page https://www.npmjs.com/package/react-colorful
+8. on create user, add user settings for that user at the same time
