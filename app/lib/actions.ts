@@ -9,7 +9,7 @@ import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 import { CreateEventError, EventStatus, UserRole, UserSettings } from './definitions';
 import { auth, getUserByEmail } from '@/auth';
-import { sendCancelledEmail, sendRevokedEmail } from './mails';
+import { sendCancelledEmail, sendCreatedEventEmail, sendRevokedEmail } from './mails';
 
 export async function authenticate(
     prevState: string | undefined,
@@ -273,6 +273,7 @@ const EventSchema = z.object({
 });
 
 export async function createEvent(formData: FormData) {
+    const session = await auth();
     let response;
     const validatedFields = EventSchema.safeParse({
         user_id: formData.get('user_id'),
@@ -312,6 +313,8 @@ export async function createEvent(formData: FormData) {
             message: CreateEventError.NO_USER,
         };
     }
+    const r = await sendCreatedEventEmail({ recipientMailAddress: session?.user?.email, recipientName: session?.user?.name, eventDate: date });
+
     revalidatePath('/book');
     return {
         success: true,

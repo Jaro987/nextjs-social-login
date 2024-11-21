@@ -229,3 +229,9 @@ export async function GET() {
 //   FALSE,
 //   FALSE
 // );
+
+//to delete events even if they have cancellations, delete and cancellations at the same time
+// ALTER TABLE cancellation
+// DROP CONSTRAINT cancellation_event_id_fkey,
+// ADD CONSTRAINT cancellation_event_id_fkey FOREIGN KEY (event_id)
+// REFERENCES calendar_events(id) ON DELETE CASCADE;

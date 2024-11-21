@@ -2,6 +2,7 @@ import { CancelledEventTemplate } from "@/components/emailTemplates/CancelledEve
 import { Resend } from "resend";
 import { render } from "@react-email/render";
 import { RevokedEventTemplate } from "@/components/emailTemplates/RevokedEvent";
+import { CreatedEventTemplate } from "@/components/emailTemplates/CreatedEvent";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -52,6 +53,29 @@ export async function sendRevokedEmail({ recipientMailAddress, recipientName, re
             from: 'A-frame pool house <host@devsandbox.in.rs>', //tenant email
             to: [recipientMailAddress],
             subject: 'Reservation revoked',
+            html: html
+        });
+        // todo: add logger
+        if (!data.error) {
+            //todo: return { message: 'Email sent.' };
+        }
+    } catch (error) {
+        console.log(error);
+
+    }
+}
+
+export async function sendCreatedEventEmail({ recipientMailAddress, recipientName, eventDate }: SendRevokedEmailProps) {
+
+    const html = await render(
+        CreatedEventTemplate({ recipientName, eventDate }) as React.ReactElement,
+    );
+
+    try {
+        const data = await resend.emails.send({
+            from: 'A-frame pool house <host@devsandbox.in.rs>', //tenant email
+            to: [recipientMailAddress],
+            subject: 'Reservation created',
             html: html
         });
         // todo: add logger
