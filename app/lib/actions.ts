@@ -9,7 +9,7 @@ import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 import { CreateEventError, EventStatus, UserRole, UserSettings } from './definitions';
 import { auth, getUserByEmail } from '@/auth';
-import { sendCancelledEmail } from './mails';
+import { sendCancelledEmail, sendRevokedEmail } from './mails';
 
 export async function authenticate(
     prevState: string | undefined,
@@ -353,14 +353,14 @@ export async function deactivateEvent({ eventId, recipientMailAddress, recipient
     }
 }
 
-export async function activateEvent(id: string, date: number) {
+export async function activateEvent({ eventId, recipientMailAddress, recipientName, date, eventDate }: EventManipulationType) {
     const session = await auth();
     const revoker = await getUserByEmail(session?.user?.email as string);
     try {
         const res = await sql`
         SELECT date
         FROM calendar_events
-        WHERE id = ${id};
+        WHERE id = ${eventId};
         `
 
         const activeEvent = await sql`
@@ -371,24 +371,28 @@ export async function activateEvent(id: string, date: number) {
 
         if (activeEvent.rowCount > 0) {
             return { success: false, message: 'Date already booked.' };
+
         }
 
     } catch (error) {
+        console.log({ error });
+
         return { success: false, message: 'Database Error: Failed to Revoke Event.' };
     }
     try {
         await sql`BEGIN`;
         await sql`
-            UPDATE calendar_events
-            SET status = ${EventStatus.ACTIVE}
-            WHERE id = ${id};
+        UPDATE calendar_events
+        SET status = ${EventStatus.ACTIVE}
+        WHERE id = ${eventId};
         `;
         await sql`
-            UPDATE cancellation
-            SET revoked_at = ${new Date(date).toISOString()}, revoked_by = ${revoker?.id}
-            WHERE event_id = ${id} AND revoked_at IS NULL AND revoked_by IS NULL;
+        UPDATE cancellation
+        SET revoked_at = ${new Date(date).toISOString()}, revoked_by = ${revoker?.id}
+        WHERE event_id = ${eventId} AND revoked_at IS NULL AND revoked_by IS NULL;
         `;
         await sql`COMMIT`;
+        const r = await sendRevokedEmail({ recipientMailAddress, recipientName, revokerName: revoker?.name, eventDate })
         revalidatePath('/book');
         return { success: true, message: 'Event Successfully Revoked.' };
 

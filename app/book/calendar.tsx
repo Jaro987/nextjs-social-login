@@ -28,7 +28,7 @@ interface Props {
         errors?: undefined;
     }>,
     cancelEvent: ({ eventId, recipientMailAddress, recipientName, date, eventDate }: { eventId: string, recipientMailAddress: string, recipientName: string, date: number, eventDate: string }) => Promise<{ message: string }>
-    revokeEvent: (id: string, date: number) => Promise<{ success: boolean; message: string }>
+    revokeEvent: ({ eventId, recipientMailAddress, recipientName, date, eventDate }: { eventId: string, recipientMailAddress: string, recipientName: string, date: number, eventDate: string }) => Promise<{ message: string, success: boolean }>
 }
 
 const Calendar = ({ events = [], addEvent, cancelEvent, revokeEvent }: Props) => {

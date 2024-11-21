@@ -11,7 +11,7 @@ type Props = {
     setOpen: (open: boolean) => void,
     event?: CalendarEventObj
     cancelEvent: ({ eventId, recipientMailAddress, recipientName, date, eventDate }: { eventId: string, recipientMailAddress: string, recipientName: string, date: number, eventDate: string }) => Promise<{ message: string }>
-    revokeEvent: (id: string, date: number) => Promise<{ success: boolean; message: string }>
+    revokeEvent: ({ eventId, recipientMailAddress, recipientName, date, eventDate }: { eventId: string, recipientMailAddress: string, recipientName: string, date: number, eventDate: string }) => Promise<{ success: boolean; message: string }>
 }
 
 const EventDetails = ({ open, setOpen, event, cancelEvent, revokeEvent }: Props) => {
@@ -78,8 +78,8 @@ const EventDetails = ({ open, setOpen, event, cancelEvent, revokeEvent }: Props)
         setOpen(false);
     }
 
-    const undoDelete = async (id: string) => {
-        const r = await revokeEvent(id, Date.now());
+    const undoDelete = async () => {
+        const r = await revokeEvent({ eventId: id!, recipientMailAddress: email!, recipientName: title!, date: Date.now(), eventDate: startStr! });
 
         if (r.success) {
             toast.success(r.message);
@@ -105,7 +105,7 @@ const EventDetails = ({ open, setOpen, event, cancelEvent, revokeEvent }: Props)
         } else if (show && status === EventStatus.CANCELLED) {
             return (
                 <DialogFooter>
-                    <Button className="text-white bg-green-500" onClick={() => undoDelete(id || '')}>Revoke Reservation</Button>
+                    <Button className="text-white bg-green-500" onClick={() => undoDelete()}>Revoke Reservation</Button>
                 </DialogFooter>)
         }
     }
