@@ -10,8 +10,8 @@ TODO
         - create my profile
         - edit my profile
         - create my event
-        - cancel my event
-        - revoke my event
+        - cancel my event ✓
+        - revoke my event ✓
         - reminder for 7 days before event
         - reminder for one day before event
 
