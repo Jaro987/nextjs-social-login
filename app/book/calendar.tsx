@@ -27,7 +27,7 @@ interface Props {
         message: string;
         errors?: undefined;
     }>,
-    cancelEvent: (id: string, date: number) => Promise<{ message: string }>
+    cancelEvent: ({ eventId, recipientMailAddress, recipientName, date, eventDate }: { eventId: string, recipientMailAddress: string, recipientName: string, date: number, eventDate: string }) => Promise<{ message: string }>
     revokeEvent: (id: string, date: number) => Promise<{ success: boolean; message: string }>
 }
 

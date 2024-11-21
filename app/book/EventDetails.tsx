@@ -10,7 +10,7 @@ type Props = {
     open: boolean
     setOpen: (open: boolean) => void,
     event?: CalendarEventObj
-    cancelEvent: (id: string, date: number) => Promise<{ message: string }>
+    cancelEvent: ({ eventId, recipientMailAddress, recipientName, date, eventDate }: { eventId: string, recipientMailAddress: string, recipientName: string, date: number, eventDate: string }) => Promise<{ message: string }>
     revokeEvent: (id: string, date: number) => Promise<{ success: boolean; message: string }>
 }
 
@@ -32,18 +32,18 @@ const EventDetails = ({ open, setOpen, event, cancelEvent, revokeEvent }: Props)
                         </div>
                     </div >
                     <p className="font-bold">Date:</p>
-                    <p>{formatDateToLocal(startStr)}</p>
+                    <p>{formatDateToLocal({ dateStr: startStr })}</p>
                     {cancellations && cancellations?.length > 0 && <p className="font-bold">History:</p>}
                     {cancellations?.map((cancellation) => (
                         <div key={cancellation.cancelled_at} className="flex flex-col">
                             <div className="flex flex-row gap-2">
                                 <XCircleIcon className="w-4 pt-1" color="red" />
-                                <p className="text-red-500">Cancelled on {formatDateToLocal(cancellation.cancelled_at, true)} by {cancellation.cancelled_by}</p>
+                                <p className="text-red-500">Cancelled on {formatDateToLocal({ dateStr: cancellation.cancelled_at, withTime: true })} by {cancellation.cancelled_by}</p>
                             </div>
                             {cancellation.revoked_at &&
                                 <div className="flex flex-row gap-2 ml-4">
                                     <ArrowUturnDownIcon className="w-4 pt-1" color="green" />
-                                    <p className="text-green-500">Revoked on {formatDateToLocal(cancellation.revoked_at, true)} by {cancellation.revoked_by}</p>
+                                    <p className="text-green-500">Revoked on {formatDateToLocal({ dateStr: cancellation.revoked_at, withTime: true })} by {cancellation.revoked_by}</p>
                                 </div>
                             }
                         </div>
@@ -64,7 +64,7 @@ const EventDetails = ({ open, setOpen, event, cancelEvent, revokeEvent }: Props)
                         </div>
                     </div >
                     <p className="font-bold">Date:</p>
-                    <p>{formatDateToLocal(startStr)}</p>
+                    <p>{formatDateToLocal({ dateStr: startStr })}</p>
                 </>
             )
         }
@@ -73,8 +73,8 @@ const EventDetails = ({ open, setOpen, event, cancelEvent, revokeEvent }: Props)
         )
     }
 
-    const deleteEvent = async (id: string) => {
-        await cancelEvent(id, Date.now());
+    const deleteEvent = async () => {
+        await cancelEvent({ eventId: id!, recipientMailAddress: email!, recipientName: title!, date: Date.now(), eventDate: startStr! });
         setOpen(false);
     }
 
@@ -100,12 +100,12 @@ const EventDetails = ({ open, setOpen, event, cancelEvent, revokeEvent }: Props)
 
             return (
                 <DialogFooter>
-                    <Button variant="destructive" onClick={() => deleteEvent(id || '')}>Cancel Reservation</Button>
+                    <Button variant="destructive" onClick={() => deleteEvent()}>Cancel Reservation</Button>
                 </DialogFooter>)
         } else if (show && status === EventStatus.CANCELLED) {
             return (
                 <DialogFooter>
-                    <Button className="text-white bg-green-500" onClick={() => undoDelete(id || '')}>Revoke Event</Button>
+                    <Button className="text-white bg-green-500" onClick={() => undoDelete(id || '')}>Revoke Reservation</Button>
                 </DialogFooter>)
         }
     }

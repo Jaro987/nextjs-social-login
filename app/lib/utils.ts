@@ -7,16 +7,19 @@ export const formatCurrency = (amount: number) => {
   });
 };
 
-export const formatDateToLocal = (
-  dateStr: string | undefined | null,
-  withTime: boolean = false,
-  locale: string = 'en-US',
+export const formatDateToLocal = ({ dateStr, withTime = false, locale = 'en-US', withWeekday = false }: {
+  dateStr: string | undefined | null;
+  withTime?: boolean;
+  locale?: string;
+  withWeekday?: boolean;
+}
 ) => {
   if (!dateStr) {
     return '';
   }
   const date = new Date(dateStr);
   const options: Intl.DateTimeFormatOptions = {
+    weekday: withWeekday ? 'long' : undefined,
     day: 'numeric',
     month: 'short',
     year: 'numeric',

@@ -57,9 +57,9 @@ export default async function Page() {
 
     }
 
-    const cancelEvent = async (id: string, date: number) => {
+    const cancelEvent = async ({ eventId, recipientMailAddress, recipientName, date, eventDate }: { eventId: string, recipientMailAddress: string, recipientName: string, date: number, eventDate: string }) => {
         'use server'
-        return await deactivateEvent(id, date);
+        return await deactivateEvent({ eventId, recipientMailAddress, recipientName, date, eventDate });
     }
 
     const revokeEvent = async (id: string, date: number) => {

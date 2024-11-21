@@ -9,6 +9,7 @@ import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 import { CreateEventError, EventStatus, UserRole, UserSettings } from './definitions';
 import { auth, getUserByEmail } from '@/auth';
+import { sendCancelledEmail } from './mails';
 
 export async function authenticate(
     prevState: string | undefined,
@@ -319,20 +320,30 @@ export async function createEvent(formData: FormData) {
 
 }
 
-export async function deactivateEvent(id: string, date: number) {
+type EventManipulationType = {
+    eventId: string;
+    recipientMailAddress: string;
+    recipientName: string;
+    date: number;
+    eventDate: string
+}
+export async function deactivateEvent({ eventId, recipientMailAddress, recipientName, date, eventDate }: EventManipulationType) {
     const session = await auth();
     const canceller = await getUserByEmail(session?.user?.email as string);
 
     try {
+        //TODO: try sql.emit or dispatch or something used eariler for sequential requests
         await sql`
             UPDATE calendar_events
             SET status = ${EventStatus.CANCELLED}
-            WHERE id = ${id};
+            WHERE id = ${eventId};
           `;
         await sql`
             INSERT INTO cancellation (event_id, cancelled_at, cancelled_by)
-            VALUES (${id}, ${new Date(date).toISOString()}, ${canceller?.id});
-          `
+            VALUES (${eventId}, ${new Date(date).toISOString()}, ${canceller?.id});
+          `;
+        const r = await sendCancelledEmail({ recipientMailAddress, recipientName, cancellerName: canceller?.name, eventDate })
+
         revalidatePath('/book');
         return { message: 'Deleted Event.' };
     } catch (error) {
