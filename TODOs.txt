@@ -7,7 +7,7 @@ TODO
         - cancel any event
         - revoke any event
     - for User on:
-        - create my profile
+        - create my profile ✓
         - edit my profile
         - create my event ✓
         - cancel my event ✓

@@ -9,6 +9,7 @@ import Google from 'next-auth/providers/google';
 import Facebook from 'next-auth/providers/facebook';
 import { createUser, createUserSettings } from './app/lib/actions';
 import { getRandomColor } from './app/lib/utils';
+import { sendCreatedUserEmail } from './app/lib/mails';
 
 
 export async function getUserByEmail(email: string): Promise<User | undefined> {
@@ -35,8 +36,11 @@ async function createUserIfNotExists(profile: any) {
 
         const result = await createUser(userData);
         if ((result as QueryResultRow).rowCount > 0) {
-            const createdUser = await getUserByEmail(profile.email)
-            await createUserSettings({ userId: createdUser?.id })
+            const createdUser = await getUserByEmail(profile.email);
+            if (createdUser) {
+                await createUserSettings({ userId: createdUser.id });
+                await sendCreatedUserEmail({ recipientMailAddress: createdUser?.email, recipientName: createdUser?.name, origin: profile.password });
+            }
         }
         return (result as QueryResultRow).rowCount > 0 ? 'created' : 'existed';
 
