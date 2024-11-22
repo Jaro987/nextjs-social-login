@@ -3,12 +3,18 @@ import Profile from "./Profile";
 import { Card, CardContent } from "@/components/ui/card";
 import { fetchSettingsByUserId } from "../lib/data";
 import { mapDBUserSettingsToUserSettings } from "../lib/utils";
+import { sendUserUpdatedEmail, SendUserUpdatedEmailProps } from "../lib/mails";
 
 export default async function Page() {
     const session = await auth();
     const user = await getUserByEmail(session?.user?.email as string);
     const dbUserSettings = await fetchSettingsByUserId(user!.id as string);
     const userSettings = mapDBUserSettingsToUserSettings(dbUserSettings);
+
+    async function sendMail({ recipientMailAddress, recipientName, changes }: SendUserUpdatedEmailProps) {
+        'use server'
+        await sendUserUpdatedEmail({ recipientMailAddress, recipientName, changes });
+    }
 
     return (
         <div className='h-screen w-full flex justify-center'>
@@ -19,7 +25,9 @@ export default async function Page() {
                 <CardContent className="w-[-webkit-fill-available] justify-items-center">
                     <Profile
                         user={session?.user}
-                        settings={userSettings} />
+                        settings={userSettings}
+                        sendMail={sendMail}
+                    />
                 </CardContent>
             </Card>
         </div>

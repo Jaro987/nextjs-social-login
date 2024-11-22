@@ -4,8 +4,9 @@ import { render } from "@react-email/render";
 import { RevokedEventTemplate } from "@/components/emailTemplates/RevokedEvent";
 import { CreatedEventTemplate } from "@/components/emailTemplates/CreatedEvent";
 import { CreatedUserTemplate } from "@/components/emailTemplates/CreatedUser";
+import { EditedUserTemplate } from "@/components/emailTemplates/EditedUser";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend('re_XEEdCZRL_5BkBWPgE1fgmhDFG4j1ePBQ1');
 
 type SendCancelledEmailProps = {
     recipientMailAddress: string,
@@ -117,4 +118,32 @@ export async function sendCreatedUserEmail({ recipientMailAddress, recipientName
         console.log(error);
 
     }
-}   
+}
+
+export type SendUserUpdatedEmailProps = {
+    recipientMailAddress: string,
+    recipientName: string,
+    changes: Record<string, string | boolean>,
+}
+
+export async function sendUserUpdatedEmail({ recipientMailAddress, recipientName, changes }: SendUserUpdatedEmailProps) {
+    const html = await render(
+        EditedUserTemplate({ recipientName, changes }) as React.ReactElement,
+    );
+
+    try {
+        const data = await resend.emails.send({
+            from: 'A-frame pool house <host@devsandbox.in.rs>', //tenant email
+            to: [recipientMailAddress],
+            subject: 'User account edited',
+            html: html
+        });
+        // todo: add logger
+        if (!data.error) {
+            //todo: return { message: 'Email sent.' };
+        }
+    } catch (error) {
+        console.log(error);
+
+    }
+}  

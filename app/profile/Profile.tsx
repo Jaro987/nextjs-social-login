@@ -8,13 +8,15 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { updateUser, updateUserSettings } from "../lib/actions";
 import { UserSettings } from "../lib/definitions";
+import { SendUserUpdatedEmailProps } from "../lib/mails";
 
 type Props = {
     user: User
     settings: UserSettings;
+    sendMail: ({ recipientMailAddress, recipientName, changes }: SendUserUpdatedEmailProps) => Promise<void>;
 };
 
-export default function Profile({ user, settings }: Props) {
+export default function Profile({ user, settings, sendMail }: Props) {
     const [name, setName] = useState<string>(user.name as string);
     const [email, setEmail] = useState<string>(user.email as string);
     const [phone, setPhone] = useState<string>(user.phone as string);
@@ -31,7 +33,7 @@ export default function Profile({ user, settings }: Props) {
     const [oneDayReminder, setOneDayReminder] = useState<boolean>(settings.oneDayReminder);
 
     async function handleSaveProfileChanges() {
-        const changes: Record<string, unknown> = {};
+        const changes: Record<string, string> = {};
 
         if (selectedFile) {
             const formData = new FormData();
@@ -55,7 +57,7 @@ export default function Profile({ user, settings }: Props) {
         const updatedUser = await updateUser(user.email!, changes);
 
         if (updatedUser.success) {
-
+            await sendMail({ recipientMailAddress: user.email!, recipientName: user.name!, changes });
             toast.success(updatedUser.message, {
                 description: updatedUser.description,
             });
@@ -88,6 +90,7 @@ export default function Profile({ user, settings }: Props) {
 
         const updatedUserSettings = await updateUserSettings({ id: settings.id, newSettings: settingsChanges });
         if (updatedUserSettings.success) {
+            await sendMail({ recipientMailAddress: user.email!, recipientName: user.name!, changes: settingsChanges });
 
             toast.success(updatedUserSettings.message);
         } else {
