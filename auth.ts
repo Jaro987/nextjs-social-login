@@ -3,13 +3,14 @@ import Credentials from 'next-auth/providers/credentials';
 import { authConfig } from './auth.config';
 import { z } from 'zod';
 import { QueryResultRow, sql } from '@vercel/postgres';
-import { UserRole, User } from '@/app/lib/definitions';
+import { UserRole, User, UserSettings } from '@/app/lib/definitions';
 import bcrypt from 'bcrypt';
 import Google from 'next-auth/providers/google';
 import Facebook from 'next-auth/providers/facebook';
 import { createUser, createUserSettings } from './app/lib/actions';
-import { getRandomColor } from './app/lib/utils';
+import { getRandomColor, mapDBUserSettingsToUserSettings } from './app/lib/utils';
 import { sendCreatedUserEmail } from './app/lib/mails';
+import { fetchSettingsByUserId } from './app/lib/data';
 
 
 export async function getUserByEmail(email: string): Promise<User | undefined> {
@@ -21,6 +22,9 @@ export async function getUserByEmail(email: string): Promise<User | undefined> {
         throw new Error('Failed to fetch user.');
     }
 }
+
+const getUserSettings = async (user?: User): Promise<UserSettings | undefined> =>
+    user ? mapDBUserSettingsToUserSettings(await fetchSettingsByUserId(user.id)) : undefined;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function createUserIfNotExists(profile: any) {
@@ -54,12 +58,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             if (user) {
                 token.role = user.role;
                 token.phone = user.phone;
+                token.settings = user.settings;
             }
             return token
         },
         session({ session, token }) {
             session.user.role = token.role;
             session.user.phone = token.phone;
+            session.user.settings = token.settings;
             return session
         }
     },
@@ -68,12 +74,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             async profile(profile) {
                 await createUserIfNotExists({ ...profile, password: 'facebook' });
                 const user = await getUserByEmail(profile.email);
+                const userSettings = await getUserSettings(user);
                 return {
                     name: profile.name,
                     email: profile.email,
                     image: profile.picture.data.url,
                     role: user?.role,
-                    phone: user?.phone
+                    phone: user?.phone,
+                    settings: userSettings
                 };
             }
         }),
@@ -81,12 +89,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             async profile(profile) {
                 await createUserIfNotExists({ ...profile, password: 'google' });
                 const user = await getUserByEmail(profile.email);
+                const userSettings = await getUserSettings(user);
                 return {
                     name: profile.name,
                     email: profile.email,
                     image: profile.picture,
                     role: user?.role,
-                    phone: user?.phone
+                    phone: user?.phone,
+                    settings: userSettings
                 };
             },
         }),
@@ -99,6 +109,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 if (parsedCredentials.success) {
                     const { email, password } = parsedCredentials.data;
                     const user = await getUserByEmail(email);
+                    const userSettings = await getUserSettings(user);
                     if (!user) return null;
                     const passwordsMatch = await bcrypt.compare(password, user.password);
                     if (passwordsMatch) return {
@@ -106,7 +117,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                         email: user.email,
                         image: user.image_url,
                         role: user.role,
-                        phone: user.phone
+                        phone: user.phone,
+                        settings: userSettings
                     };
                 }
 

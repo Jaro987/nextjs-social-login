@@ -1,4 +1,4 @@
-import { UserRole } from '../app/lib/definitions';
+import { UserSettings, UserRole } from '../app/lib/definitions';
 import { DefaultUser } from 'next-auth';
 declare module 'next-auth' {
     interface Session {
@@ -7,5 +7,6 @@ declare module 'next-auth' {
     interface User extends DefaultUser {
         role?: UserRole;
         phone?: string;
+        settings?: UserSettings;
     }
 }
