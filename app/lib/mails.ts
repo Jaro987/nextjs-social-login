@@ -23,6 +23,7 @@ export async function sendCancelledEmail({ recipientMailAddress, recipientName, 
     try {
         const data = await resend.emails.send({
             from: 'A-frame pool house <host@devsandbox.in.rs>', //tenant email
+            replyTo: ['jaroslav.mucaji@badboy.solutions'], // TODO: add this everywhere (host mail, ofc)
             to: [recipientMailAddress],
             subject: 'Reservation cancelled',
             html: html
@@ -53,6 +54,7 @@ export async function sendRevokedEmail({ recipientMailAddress, recipientName, re
     try {
         const data = await resend.emails.send({
             from: 'A-frame pool house <host@devsandbox.in.rs>', //tenant email
+            replyTo: ['jaroslav.mucaji@badboy.solutions'], // TODO: add this everywhere (host mail, ofc)
             to: [recipientMailAddress],
             subject: 'Reservation revoked',
             html: html
@@ -76,6 +78,7 @@ export async function sendCreatedEventEmail({ recipientMailAddress, recipientNam
     try {
         const data = await resend.emails.send({
             from: 'A-frame pool house <host@devsandbox.in.rs>', //tenant email
+            replyTo: ['jaroslav.mucaji@badboy.solutions'], // TODO: add this everywhere (host mail, ofc)
             to: [recipientMailAddress],
             subject: 'Reservation created',
             html: html
@@ -106,6 +109,7 @@ export async function sendCreatedUserEmail({ recipientMailAddress, recipientName
     try {
         const data = await resend.emails.send({
             from: 'A-frame pool house <host@devsandbox.in.rs>', //tenant email
+            replyTo: ['jaroslav.mucaji@badboy.solutions'], // TODO: add this everywhere (host mail, ofc)
             to: [recipientMailAddress],
             subject: 'User account created',
             html: html
@@ -126,7 +130,7 @@ export type SendUserUpdatedEmailProps = {
     changes: Record<string, string | boolean>,
 }
 
-export async function sendUserUpdatedEmail({ recipientMailAddress, recipientName, changes }: SendUserUpdatedEmailProps) {
+export async function sendUserEditedEmail({ recipientMailAddress, recipientName, changes }: SendUserUpdatedEmailProps) {
     const html = await render(
         EditedUserTemplate({ recipientName, changes }) as React.ReactElement,
     );
@@ -134,6 +138,7 @@ export async function sendUserUpdatedEmail({ recipientMailAddress, recipientName
     try {
         const data = await resend.emails.send({
             from: 'A-frame pool house <host@devsandbox.in.rs>', //tenant email
+            replyTo: ['jaroslav.mucaji@badboy.solutions'], // TODO: add this everywhere (host mail, ofc)
             to: [recipientMailAddress],
             subject: 'User account edited',
             html: html

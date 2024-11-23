@@ -1,5 +1,6 @@
 import { UserSettings } from '@/app/lib/definitions';
 import * as React from 'react';
+import BaseTemplate from './BaseTemplate';
 
 interface EmailTemplateProps {
     recipientName: string,
@@ -40,8 +41,7 @@ export const EditedUserTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
     changes
 }) => {
     return (
-        <div>
-            <h1>Hello, {recipientName}!</h1>
+        <BaseTemplate recipientName={recipientName}>
             <p>Your account has just been edited with following: </p>
             {typeof Object.values(changes)[0] === 'boolean' ? (
                 Object.entries(changes).map(
@@ -54,9 +54,7 @@ export const EditedUserTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
             ) : (
                 Object.entries(changes).map(([key, value]) => <ul key={key}><li>{`${key[0].toUpperCase()}${key.slice(1)}`} is changed to {value}</li></ul>)
             )}
-            <p>If this wasn’t expected, feel free to reach out to the host to clarify. If everything’s as planned, then all is good!</p>
-            <p>For additional information, please contact us.</p>
-        </div>
+        </BaseTemplate>
     )
 };
 

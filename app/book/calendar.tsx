@@ -130,7 +130,6 @@ const Calendar = ({ events = [], addEvent, cancelEvent, revokeEvent }: Props) =>
                 eventContent={(event) => renderEventContent(event)}
                 firstDay={1}
                 timeZone='local'
-
             />
             <ConfirmCreateEvent open={open} setOpen={setOpen} date={date} addEvent={addEvent} />
             <EventDetails open={detailsOpen} setOpen={setDetailsOpen} event={event} cancelEvent={cancelEvent} revokeEvent={revokeEvent} />

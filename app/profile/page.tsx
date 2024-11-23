@@ -3,7 +3,7 @@ import Profile from "./Profile";
 import { Card, CardContent } from "@/components/ui/card";
 import { fetchSettingsByUserId } from "../lib/data";
 import { mapDBUserSettingsToUserSettings } from "../lib/utils";
-import { sendUserUpdatedEmail, SendUserUpdatedEmailProps } from "../lib/mails";
+import { sendUserEditedEmail, SendUserUpdatedEmailProps } from "../lib/mails";
 
 export default async function Page() {
     const session = await auth();
@@ -13,7 +13,7 @@ export default async function Page() {
 
     async function sendMail({ recipientMailAddress, recipientName, changes }: SendUserUpdatedEmailProps) {
         'use server'
-        await sendUserUpdatedEmail({ recipientMailAddress, recipientName, changes });
+        await sendUserEditedEmail({ recipientMailAddress, recipientName, changes });
     }
 
     return (
@@ -23,11 +23,11 @@ export default async function Page() {
                     <CardTitle>Profile</CardTitle>
                 </CardHeader> */}
                 <CardContent className="w-[-webkit-fill-available] justify-items-center">
-                    <Profile
-                        user={session?.user}
+                    {session?.user && <Profile
+                        user={session.user}
                         settings={userSettings}
                         sendMail={sendMail}
-                    />
+                    />}
                 </CardContent>
             </Card>
         </div>
