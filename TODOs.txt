@@ -1,11 +1,11 @@
 TODO
 1. Add mailing system to app
     - for Host (all Hosts) on:
-        - create any new user
-        - edit any existing user
-        - add new event by any user
-        - cancel any event
-        - revoke any event
+        - create any new user ✓
+        - edit any existing user ✓
+        - add new event by any user ✓
+        - cancel any event ✓
+        - revoke any event ✓
     - for User on:
         - create my profile ✓
         - edit my profile ✓

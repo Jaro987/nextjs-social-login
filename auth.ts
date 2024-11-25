@@ -10,7 +10,8 @@ import Facebook from 'next-auth/providers/facebook';
 import { createUser, createUserSettings } from './app/lib/actions';
 import { getRandomColor, mapDBUserSettingsToUserSettings } from './app/lib/utils';
 import { sendCreatedUserEmail } from './app/lib/mails';
-import { fetchSettingsByUserId } from './app/lib/data';
+import { fetchSettingsByUserId, fetchUserEmailsWithHostRole } from './app/lib/data';
+import { sendCreatedUserEmailToHost } from './app/lib/mailsForHost';
 
 
 export async function getUserByEmail(email: string): Promise<User | undefined> {
@@ -43,7 +44,9 @@ async function createUserIfNotExists(profile: any) {
             const createdUser = await getUserByEmail(profile.email);
             if (createdUser) {
                 await createUserSettings({ userId: createdUser.id });
+                const hosts = await fetchUserEmailsWithHostRole();
                 await sendCreatedUserEmail({ recipientMailAddress: createdUser?.email, recipientName: createdUser?.name, origin: profile.password });
+                await sendCreatedUserEmailToHost({ hosts, newUserMail: createdUser?.email, newUserName: createdUser?.name, origin: profile.password });
             }
         }
         return (result as QueryResultRow).rowCount > 0 ? 'created' : 'existed';

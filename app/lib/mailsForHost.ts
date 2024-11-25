@@ -1,30 +1,30 @@
-import { CancelledEventTemplate } from "@/components/emailTemplates/CancelledEvent";
 import { Resend } from "resend";
 import { render } from "@react-email/render";
-import { RevokedEventTemplate } from "@/components/emailTemplates/RevokedEvent";
-import { CreatedEventTemplate } from "@/components/emailTemplates/CreatedEvent";
-import { CreatedUserTemplate } from "@/components/emailTemplates/CreatedUser";
-import { EditedUserTemplate } from "@/components/emailTemplates/EditedUser";
+import { CancelledEventToHostTemplate } from "@/components/emailToHostTemplates/CancelledEventToHostTemplate";
+import { CreatedEventToHostTemplate } from "@/components/emailToHostTemplates/CreatedEventToHostTemplate";
+import { CreatedUserToHostTemplate } from "@/components/emailToHostTemplates/CreatedUserToHostTemplate";
+import { RevokedEventToHostTemplate } from "@/components/emailToHostTemplates/RevokedEventToHostTemplate";
+import { EditedUserToHostTemplate } from "@/components/emailToHostTemplates/EditedUserToHostTemplate";
 
 const resend = new Resend('re_XEEdCZRL_5BkBWPgE1fgmhDFG4j1ePBQ1');
 
 type SendCancelledEmailProps = {
-    recipientMailAddress: string,
-    recipientName: string,
+    hosts: string[],
+    eventOwnerEmail: string,
+    eventOwnerName: string,
     cancellerName?: string,
     eventDate: string
 }
-export async function sendCancelledEventEmail({ recipientMailAddress, recipientName, cancellerName, eventDate }: SendCancelledEmailProps) {
+export async function sendCancelledEventEmailToHost({ hosts, eventOwnerEmail, eventOwnerName, cancellerName, eventDate }: SendCancelledEmailProps) {
 
     const html = await render(
-        CancelledEventTemplate({ recipientName, cancellerName, eventDate }) as React.ReactElement,
+        CancelledEventToHostTemplate({ eventOwnerName, eventOwnerEmail, cancellerName, eventDate }) as React.ReactElement,
     );
 
     try {
         const data = await resend.emails.send({
-            from: 'A-frame pool house <host@devsandbox.in.rs>', //tenant email
-            replyTo: ['jaroslav.mucaji@badboy.solutions'], // TODO: add this everywhere (host mail, ofc)
-            to: [recipientMailAddress],
+            from: 'A-frame pool house <host@devsandbox.in.rs>', //tenant domain
+            to: hosts,
             subject: 'Reservation cancelled',
             html: html
         });
@@ -39,23 +39,23 @@ export async function sendCancelledEventEmail({ recipientMailAddress, recipientN
 }
 
 type SendRevokedEmailProps = {
-    recipientMailAddress: string,
-    recipientName: string,
-    revokerName?: string,
+    hosts: string[],
+    eventOwnerName: string;
+    eventOwnerEmail: string;
+    revokerName?: string;
     eventDate: string
 }
 
-export async function sendRevokedEmail({ recipientMailAddress, recipientName, revokerName, eventDate }: SendRevokedEmailProps) {
+export async function sendRevokedEmailToHost({ hosts, eventOwnerName, eventOwnerEmail, revokerName, eventDate }: SendRevokedEmailProps) {
 
     const html = await render(
-        RevokedEventTemplate({ recipientName, revokerName, eventDate }) as React.ReactElement,
+        RevokedEventToHostTemplate({ eventOwnerName, eventOwnerEmail, revokerName, eventDate }) as React.ReactElement,
     );
 
     try {
         const data = await resend.emails.send({
             from: 'A-frame pool house <host@devsandbox.in.rs>', //tenant email
-            replyTo: ['jaroslav.mucaji@badboy.solutions'], // TODO: add this everywhere (host mail, ofc)
-            to: [recipientMailAddress],
+            to: hosts,
             subject: 'Reservation revoked',
             html: html
         });
@@ -69,17 +69,23 @@ export async function sendRevokedEmail({ recipientMailAddress, recipientName, re
     }
 }
 
-export async function sendCreatedEventEmail({ recipientMailAddress, recipientName, eventDate }: SendRevokedEmailProps) {
+type SendCreatedEmailProps = {
+    hosts: string[],
+    eventOwnerEmail: string,
+    eventOwnerName: string,
+    eventDate: string
+}
+
+export async function sendCreatedEventEmailToHost({ hosts, eventOwnerEmail, eventOwnerName, eventDate }: SendCreatedEmailProps) {
 
     const html = await render(
-        CreatedEventTemplate({ recipientName, eventDate }) as React.ReactElement,
+        CreatedEventToHostTemplate({ eventOwnerName, eventOwnerEmail, eventDate }) as React.ReactElement,
     );
 
     try {
         const data = await resend.emails.send({
             from: 'A-frame pool house <host@devsandbox.in.rs>', //tenant email
-            replyTo: ['jaroslav.mucaji@badboy.solutions'], // TODO: add this everywhere (host mail, ofc)
-            to: [recipientMailAddress],
+            to: hosts,
             subject: 'Reservation created',
             html: html
         });
@@ -95,22 +101,22 @@ export async function sendCreatedEventEmail({ recipientMailAddress, recipientNam
 
 
 type SendCreatedUserEmailProps = {
-    recipientMailAddress: string,
-    recipientName: string,
+    hosts: string[],
+    newUserMail: string,
+    newUserName: string,
     origin?: string,
 }
 
-export async function sendCreatedUserEmail({ recipientMailAddress, recipientName, origin }: SendCreatedUserEmailProps) {
+export async function sendCreatedUserEmailToHost({ hosts, newUserMail, newUserName, origin }: SendCreatedUserEmailProps) {
 
     const html = await render(
-        CreatedUserTemplate({ recipientName, origin }) as React.ReactElement,
+        CreatedUserToHostTemplate({ newUserName, newUserMail, origin }) as React.ReactElement,
     );
 
     try {
         const data = await resend.emails.send({
             from: 'A-frame pool house <host@devsandbox.in.rs>', //tenant email
-            replyTo: ['jaroslav.mucaji@badboy.solutions'], // TODO: add this everywhere (host mail, ofc)
-            to: [recipientMailAddress],
+            to: hosts,
             subject: 'User account created',
             html: html
         });
@@ -125,21 +131,22 @@ export async function sendCreatedUserEmail({ recipientMailAddress, recipientName
 }
 
 export type SendUserUpdatedEmailProps = {
-    recipientMailAddress: string,
-    recipientName: string,
+    hosts: string[],
+    userChangedName: string,
+    userChangedEmail: string,
     changes: Record<string, string | boolean>,
 }
 
-export async function sendUserEditedEmail({ recipientMailAddress, recipientName, changes }: SendUserUpdatedEmailProps) {
+export async function sendUserEditedEmailToHost({ hosts, userChangedEmail, userChangedName, changes }: SendUserUpdatedEmailProps) {
+
     const html = await render(
-        EditedUserTemplate({ recipientName, changes }) as React.ReactElement,
+        EditedUserToHostTemplate({ userChangedName, userChangedEmail, changes }) as React.ReactElement,
     );
 
     try {
         const data = await resend.emails.send({
             from: 'A-frame pool house <host@devsandbox.in.rs>', //tenant email
-            replyTo: ['jaroslav.mucaji@badboy.solutions'], // TODO: add this everywhere (host mail, ofc)
-            to: [recipientMailAddress],
+            to: hosts,
             subject: 'User account edited',
             html: html
         });

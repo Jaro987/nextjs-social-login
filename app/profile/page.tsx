@@ -1,19 +1,22 @@
 import { auth, getUserByEmail } from "@/auth";
 import Profile from "./Profile";
 import { Card, CardContent } from "@/components/ui/card";
-import { fetchSettingsByUserId } from "../lib/data";
+import { fetchSettingsByUserId, fetchUserEmailsWithHostRole } from "../lib/data";
 import { mapDBUserSettingsToUserSettings } from "../lib/utils";
 import { sendUserEditedEmail, SendUserUpdatedEmailProps } from "../lib/mails";
+import { sendUserEditedEmailToHost } from "../lib/mailsForHost";
 
 export default async function Page() {
     const session = await auth();
     const user = await getUserByEmail(session?.user?.email as string);
     const dbUserSettings = await fetchSettingsByUserId(user!.id as string);
     const userSettings = mapDBUserSettingsToUserSettings(dbUserSettings);
+    const hosts = await fetchUserEmailsWithHostRole();
 
     async function sendMail({ recipientMailAddress, recipientName, changes }: SendUserUpdatedEmailProps) {
         'use server'
         await sendUserEditedEmail({ recipientMailAddress, recipientName, changes });
+        await sendUserEditedEmailToHost({ hosts, userChangedEmail: recipientMailAddress, userChangedName: recipientName, changes });
     }
 
     return (

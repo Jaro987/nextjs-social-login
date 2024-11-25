@@ -9,7 +9,9 @@ import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 import { CreateEventError, EventStatus, UserRole, UserSettings } from './definitions';
 import { auth, getUserByEmail } from '@/auth';
-import { sendCancelledEmail, sendCreatedEventEmail, sendRevokedEmail } from './mails';
+import { sendCancelledEventEmail, sendCreatedEventEmail, sendRevokedEmail } from './mails';
+import { fetchUserEmailsWithHostRole } from './data';
+import { sendCancelledEventEmailToHost, sendCreatedEventEmailToHost, sendRevokedEmailToHost } from './mailsForHost';
 
 export async function authenticate(
     prevState: string | undefined,
@@ -274,6 +276,7 @@ const EventSchema = z.object({
 
 export async function createEvent(formData: FormData) {
     const session = await auth();
+    const hosts = await fetchUserEmailsWithHostRole();
     let response;
     const validatedFields = EventSchema.safeParse({
         user_id: formData.get('user_id'),
@@ -314,6 +317,7 @@ export async function createEvent(formData: FormData) {
         };
     }
     const r = await sendCreatedEventEmail({ recipientMailAddress: session?.user?.email, recipientName: session?.user?.name, eventDate: date });
+    const r2 = await sendCreatedEventEmailToHost({ hosts, eventOwnerEmail: session?.user?.email, eventOwnerName: session?.user?.name, eventDate: date });
 
     revalidatePath('/book');
     return {
@@ -333,6 +337,7 @@ type EventManipulationType = {
 export async function deactivateEvent({ eventId, recipientMailAddress, recipientName, date, eventDate }: EventManipulationType) {
     const session = await auth();
     const canceller = await getUserByEmail(session?.user?.email as string);
+    const hosts = await fetchUserEmailsWithHostRole();
 
     try {
         //TODO: try sql.emit or dispatch or something used eariler for sequential requests
@@ -345,7 +350,8 @@ export async function deactivateEvent({ eventId, recipientMailAddress, recipient
             INSERT INTO cancellation (event_id, cancelled_at, cancelled_by)
             VALUES (${eventId}, ${new Date(date).toISOString()}, ${canceller?.id});
           `;
-        const r = await sendCancelledEmail({ recipientMailAddress, recipientName, cancellerName: canceller?.name, eventDate })
+        const r = await sendCancelledEventEmail({ recipientMailAddress, recipientName, cancellerName: canceller?.name, eventDate });
+        const r2 = await sendCancelledEventEmailToHost({ hosts, eventOwnerEmail: recipientMailAddress, eventOwnerName: recipientName, cancellerName: canceller?.name, eventDate });
 
         revalidatePath('/book');
         return { message: 'Deleted Event.' };
@@ -359,6 +365,7 @@ export async function deactivateEvent({ eventId, recipientMailAddress, recipient
 export async function activateEvent({ eventId, recipientMailAddress, recipientName, date, eventDate }: EventManipulationType) {
     const session = await auth();
     const revoker = await getUserByEmail(session?.user?.email as string);
+    const hosts = await fetchUserEmailsWithHostRole();
     try {
         const res = await sql`
         SELECT date
@@ -395,7 +402,8 @@ export async function activateEvent({ eventId, recipientMailAddress, recipientNa
         WHERE event_id = ${eventId} AND revoked_at IS NULL AND revoked_by IS NULL;
         `;
         await sql`COMMIT`;
-        const r = await sendRevokedEmail({ recipientMailAddress, recipientName, revokerName: revoker?.name, eventDate })
+        const r = await sendRevokedEmail({ recipientMailAddress, recipientName, revokerName: revoker?.name, eventDate });
+        const r2 = await sendRevokedEmailToHost({ hosts, eventOwnerEmail: recipientMailAddress, eventOwnerName: recipientName, revokerName: revoker?.name, eventDate });
         revalidatePath('/book');
         return { success: true, message: 'Event Successfully Revoked.' };
 

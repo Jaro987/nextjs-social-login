@@ -9,6 +9,7 @@ import {
   InvoicesTable,
   LatestInvoiceRaw,
   Revenue,
+  User,
   // UserSettings,
 } from './definitions';
 import { formatCurrency } from './utils';
@@ -344,6 +345,21 @@ export async function fetchSettingsByUserId(id: string) {
       WHERE user_settings.user_id = ${id};
     `;
     return data.rows[0];
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch user settings.');
+  }
+}
+
+export async function fetchUserEmailsWithHostRole() {
+  try {
+    const data = await sql<Partial<User>>`
+      SELECT
+        email
+      FROM users
+      WHERE role = 'host';
+    `;
+    return data.rows.map(row => row.email) as string[];
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch user settings.');
