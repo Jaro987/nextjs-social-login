@@ -10,9 +10,10 @@ import {
   LatestInvoiceRaw,
   Revenue,
   User,
+  UserSettings,
   // UserSettings,
 } from './definitions';
-import { formatCurrency } from './utils';
+import { formatCurrency, mapDBUserSettingsToUserSettings } from './utils';
 
 export async function fetchRevenue() {
   try {
@@ -363,5 +364,33 @@ export async function fetchUserEmailsWithHostRole() {
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch user settings.');
+  }
+}
+
+export async function getUserMailSettingsByEmail({ email }: { email: string }) {
+  try {
+    const data = await sql<DBUserSettings>`
+    SELECT 
+      us.id AS id,
+      us.user_id,
+      us.create_profile,
+      us.edit_my_profile,
+      us.create_my_event,
+      us.cancel_my_event,
+      us.revoke_my_event,
+      us.seven_day_reminder,
+      us.one_day_reminder
+    FROM 
+      users u
+    JOIN 
+      user_settings us 
+    ON 
+      u.id = us.user_id
+    WHERE 
+      u.email = ${email};
+  `;
+    return mapDBUserSettingsToUserSettings(data.rows[0]) as UserSettings;
+  } catch (error) {
+    console.error('Database Error:', error);
   }
 }
