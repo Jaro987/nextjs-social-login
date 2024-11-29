@@ -5,7 +5,7 @@ import { fetchAllCalendarEvents, fetchAllCalendarEventsForAdminOrHost } from '..
 import { Suspense } from 'react';
 import { activateEvent, createEvent, createInvoice, deactivateEvent } from '../lib/actions';
 import { auth, getUserByEmail } from '@/auth';
-import { CalendarEvent, UserRole } from '../lib/definitions';
+import { CalendarEvent, CreateEventError, UserRole } from '../lib/definitions';
 
 export const metadata: Metadata = {
     title: 'Book',
@@ -35,26 +35,24 @@ export default async function Page() {
     const addEvent = async (date: string) => {
         'use server'
         const user = await getUserByEmail(session?.user?.email as string);
-        if (user) {
-            const eventData = new FormData();
-            eventData.append('user_id', user?.id as string);
-            eventData.append('date', date);
-            const newEvent = await createEvent(eventData);
-            if (newEvent.success) {
-                const invoiceData = new FormData();
-                invoiceData.append('customerId', user?.id as string);
-                invoiceData.append('amount', '180'); // TODO: change to dynamic value from form on home page (configurator) or confirm-crete-event popup (add that UI)
-                invoiceData.append('status', 'pending');
-                const newInvoice = await createInvoice({}, invoiceData);
-                if (newInvoice.success) {
-                    return { success: true, message: 'Event and pending invoice created.' };
-                }
-            }
-            return newEvent;
-
+        if (!user) {
+            return { success: false, message: CreateEventError.NO_USER };
         };
-        return { success: false, message: 'No user found.' };
-
+        const eventData = new FormData();
+        eventData.append('user_id', user?.id as string);
+        eventData.append('date', date);
+        const newEvent = await createEvent(eventData);
+        if (newEvent.success) {
+            const invoiceData = new FormData();
+            invoiceData.append('customerId', user?.id as string);
+            invoiceData.append('amount', '180'); // TODO: change to dynamic value from form on home page (configurator) or confirm-crete-event popup (add that UI)
+            invoiceData.append('status', 'pending');
+            const newInvoice = await createInvoice({}, invoiceData);
+            if (newInvoice.success) {
+                return { success: true, message: 'Event and pending invoice created.' };
+            }
+        }
+        return newEvent;
     }
 
     const cancelEvent = async ({ eventId, recipientMailAddress, recipientName, date, eventDate }: { eventId: string, recipientMailAddress: string, recipientName: string, date: number, eventDate: string }) => {
