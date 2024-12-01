@@ -12,6 +12,7 @@ import { auth, getUserByEmail } from '@/auth';
 import { sendCancelledEventEmail, sendCreatedEventEmail, sendRevokedEmail } from './mails';
 import { fetchUserEmailsWithHostRole, getUserMailSettingsByEmail } from './data';
 import { sendCancelledEventEmailToHost, sendCreatedEventEmailToHost, sendRevokedEmailToHost } from './mailsForHost';
+import logToFile from './logger';
 
 export async function authenticate(
     prevState: string | undefined,
@@ -133,6 +134,7 @@ export async function updateInvoice(
     prevState: State,
     formData: FormData,
 ) {
+    logToFile(`Update Invoice attempt by ${formData.get('customerId')} with amount ${formData.get('amount')} and status ${formData.get('status')}`);
     const validatedFields = UpdateInvoice.safeParse({
         customerId: formData.get('customerId'),
         amount: formData.get('amount'),
@@ -156,6 +158,8 @@ export async function updateInvoice(
         WHERE id = ${id}
       `;
     } catch (error) {
+        logToFile('Updated Invoice fail');
+
         return { message: 'Database Error: Failed to Update Invoice.' };
     }
 
