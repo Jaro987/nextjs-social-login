@@ -276,6 +276,10 @@ export async function updateUser(userEmail: string, updates: Record<string, unkn
 const EventSchema = z.object({
     user_id: z.string(),
     date: z.string(),
+    adults: z.coerce.number(),
+    children: z.coerce.number(),
+    infants: z.coerce.number(),
+    price: z.coerce.number(),
 });
 
 export async function createEvent(formData: FormData) {
@@ -287,6 +291,10 @@ export async function createEvent(formData: FormData) {
     const validatedFields = EventSchema.safeParse({
         user_id: formData.get('user_id'),
         date: formData.get('date'),
+        price: formData.get('price'),
+        adults: formData.get('adults'),
+        children: formData.get('children'),
+        infants: formData.get('infants'),
     });
 
     if (!validatedFields.success) {
@@ -296,7 +304,7 @@ export async function createEvent(formData: FormData) {
             message: 'Missing Fields. Failed to Create Event.',
         };
     }
-    const { user_id, date } = validatedFields.data;
+    const { user_id, date, price, adults, children, infants } = validatedFields.data;
 
     try {
         const existingEvent = await sql`
@@ -311,8 +319,8 @@ export async function createEvent(formData: FormData) {
             };
         }
         response = await sql`
-        INSERT INTO calendar_events (date, user_id, status)
-        VALUES (${date}, ${user_id}, ${EventStatus.ACTIVE})
+        INSERT INTO calendar_events (date, user_id, status, adults, children, infants, price)
+        VALUES (${date}, ${user_id}, ${EventStatus.ACTIVE}, ${adults}, ${children}, ${infants}, ${price * 100})
       `;
     } catch (error) {
         console.log({ error });

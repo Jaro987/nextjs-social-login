@@ -235,3 +235,15 @@ export async function GET() {
 // DROP CONSTRAINT cancellation_event_id_fkey,
 // ADD CONSTRAINT cancellation_event_id_fkey FOREIGN KEY (event_id)
 // REFERENCES calendar_events(id) ON DELETE CASCADE;
+
+
+// for adding adults count to calendar_events:
+// ALTER TABLE calendar_events
+// ADD COLUMN adults INTEGER,
+// ADD COLUMN children INTEGER,
+// ADD COLUMN infants INTEGER,
+// ADD COLUMN price_to_pay INTEGER;
+
+// ALTER TABLE calendar_events
+// RENAME COLUMN price_to_pay TO price;
+

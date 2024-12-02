@@ -27,12 +27,16 @@ export default async function Page() {
                 myEvent: e.email === session?.user?.email,
                 show: session?.user?.role === UserRole.ADMIN || session?.user?.role === UserRole.HOST,
                 cancellations: e.cancellations,
-                status: e.status
+                status: e.status,
+                adults: e.adults,
+                children: e.children,
+                infants: e.infants,
+                price: e.price
             }
         })
     }
 
-    const addEvent = async (date: string) => {
+    const addEvent = async (date: string, adults: number, children: number, infants: number, price: number) => {
         'use server'
         const user = await getUserByEmail(session?.user?.email as string);
         if (!user) {
@@ -41,6 +45,10 @@ export default async function Page() {
         const eventData = new FormData();
         eventData.append('user_id', user?.id as string);
         eventData.append('date', date);
+        eventData.append('adults', adults.toString());
+        eventData.append('children', children.toString());
+        eventData.append('infants', infants.toString());
+        eventData.append('price', price.toString());
         const newEvent = await createEvent(eventData);
         if (newEvent.success) {
             const invoiceData = new FormData();

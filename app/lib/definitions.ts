@@ -117,6 +117,10 @@ export type CalendarEvent = {
   image_url: string;
   cancellations?: Cancellation[] | null;
   status: EventStatus;
+  adults: number;
+  children: number;
+  infants: number;
+  price: number;
 }
 
 export type CalendarEventObj = {
@@ -131,7 +135,11 @@ export type CalendarEventObj = {
     show: boolean,
     myEvent: boolean,
     cancellations: Cancellation[] | null,
-    status: EventStatus
+    status: EventStatus,
+    adults: number;
+    children: number;
+    infants: number;
+    price: number;
   }
 }
 

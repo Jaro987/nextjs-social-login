@@ -15,7 +15,7 @@ import { Badge } from '@/components/ui/badge'
 
 interface Props {
     events: Partial<CalendarEvent>[]
-    addEvent: (date: string) => Promise<{
+    addEvent: (date: string, adults: number, children: number, infants: number, price: number) => Promise<{
         success: boolean;
         errors: {
             date?: string[] | undefined;

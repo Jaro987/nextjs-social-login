@@ -230,6 +230,10 @@ export async function fetchAllCalendarEvents() {
         ce.id AS event_id, 
         ce.date, 
         ce.status,
+        ce.adults,
+        ce.children,
+        ce.infants,
+        ce.price,
         u.id AS user_id, 
         u.name, 
         u.email, 
@@ -240,7 +244,11 @@ export async function fetchAllCalendarEvents() {
       WHERE ce.status = 'active';
     `;
 
-    const events = data.rows;
+    const events = data.rows.map((event) => ({
+      ...event,
+      price: event.price / 100,
+    }));
+
     return events;
   } catch (err) {
     console.error('Database Error:', err);
@@ -255,6 +263,10 @@ export async function fetchAllCalendarEventsForAdminOrHost() {
     ce.id AS event_id, 
     ce.date,
     ce.status,
+    ce.adults,
+    ce.children,
+    ce.infants,
+    ce.price,
     u.id AS user_id, 
     u.name, 
     u.email, 
@@ -280,7 +292,11 @@ LEFT JOIN users cu ON c.cancelled_by = cu.id
 GROUP BY ce.id, u.id;
 `;
 
-    const events = data.rows;
+    const events = data.rows.map((event) => ({
+      ...event,
+      price: event.price / 100,
+    }));
+
     return events;
   } catch (err) {
     console.error('Database Error:', err);

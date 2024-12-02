@@ -16,13 +16,13 @@ type Props = {
 
 const EventDetails = ({ open, setOpen, event, cancelEvent, revokeEvent }: Props) => {
     const { id, title, startStr, backgroundColor, extendedProps } = event || {};
-    const { image_url, email, phone, show, myEvent, cancellations, status } = extendedProps || {};
+    const { image_url, email, phone, show, myEvent, cancellations, status, adults, children, infants, price } = extendedProps || {};
 
     const bookingDetails = () => {
         if (show) {
             return (
                 <>
-                    <p className="font-bold">Guest:</p>
+                    <p className="font-bold">Reservation owner:</p>
                     <div className={`flex flex-row gap-6 bg-[${backgroundColor}]`}>
                         <Image src={image_url || ''} className="rounded-full border-2 border-gray-300" width={80} height={80} alt={`${title}'s profile picture`} />
                         <div className="flex flex-col">
@@ -33,6 +33,10 @@ const EventDetails = ({ open, setOpen, event, cancelEvent, revokeEvent }: Props)
                     </div >
                     <p className="font-bold">Date:</p>
                     <p>{formatDateToLocal({ dateStr: startStr })}</p>
+                    <p className="font-bold">To pay:</p>
+                    <p>€{price}</p>
+                    <p className="font-bold">Guests:</p>
+                    {(adults || children || infants) && <p>{adults ? `${adults} adults` : ''}{children ? `, ${children} children` : ''}{infants ? `, ${infants} infants` : ''}</p>}
                     {cancellations && cancellations?.length > 0 && <p className="font-bold">History:</p>}
                     {cancellations?.map((cancellation) => (
                         <div key={cancellation.cancelled_at} className="flex flex-col">
@@ -54,7 +58,7 @@ const EventDetails = ({ open, setOpen, event, cancelEvent, revokeEvent }: Props)
         if (myEvent) {
             return (
                 <>
-                    <p className="font-bold">Guest:</p>
+                    <p className="font-bold">Reservation owner:</p>
                     <div className={`flex flex-row gap-6 bg-[${backgroundColor}]`}>
                         <Image src={image_url || ''} className="rounded-full border-2 border-gray-300" width={80} height={80} alt={`${title}'s profile picture`} />
                         <div className="flex flex-col">
@@ -65,6 +69,10 @@ const EventDetails = ({ open, setOpen, event, cancelEvent, revokeEvent }: Props)
                     </div >
                     <p className="font-bold">Date:</p>
                     <p>{formatDateToLocal({ dateStr: startStr })}</p>
+                    <p className="font-bold">To pay:</p>
+                    <p>€{price}</p>
+                    <p className="font-bold">Guests:</p>
+                    {(adults || children || infants) && <p>{adults ? `${adults} adults` : ''}{children ? `, ${children} children` : ''}{infants ? `, ${infants} infants` : ''}</p>}
                 </>
             )
         }

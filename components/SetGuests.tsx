@@ -40,6 +40,7 @@ export default function SetGuests() {
         }
 
         setTotal(calculatedTotal);
+        localStorage.setItem('price', calculatedTotal.toString());
     }, [adults, children, infants]);
 
     return (

@@ -17,7 +17,7 @@ type Props = {
     open: boolean;
     setOpen: (open: boolean) => void;
     date: string;
-    addEvent: (date: string) => Promise<{
+    addEvent: (date: string, adults: number, children: number, infants: number, price: number) => Promise<{
         success: boolean;
         errors: {
             date?: string[] | undefined;
@@ -45,7 +45,11 @@ export default function ConfirmCreateEvent({ open, setOpen, date, addEvent }: Pr
     });
 
     const handleContinue = async () => {
-        const r = await addEvent(date);
+        const adults = parseInt(localStorage.getItem('adults') || '0');
+        const children = parseInt(localStorage.getItem('children') || '0');
+        const infants = parseInt(localStorage.getItem('infants') || '0');
+        const price = parseInt(localStorage.getItem('price') || '0');
+        const r = await addEvent(date, adults, children, infants, price);
         setOpen(false);
 
         if (r.success) {
