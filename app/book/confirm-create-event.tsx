@@ -11,6 +11,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { toast } from "sonner";
 import { CreateEventError } from "../lib/definitions";
+import SetGuests from "@/components/SetGuests";
 
 type Props = {
     open: boolean;
@@ -64,13 +65,16 @@ export default function ConfirmCreateEvent({ open, setOpen, date, addEvent }: Pr
     }
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
-            <AlertDialogContent>
+            <AlertDialogContent className="w-full">
                 <AlertDialogHeader>
                     <AlertDialogTitle>Book this day?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        This action will create book a stay in <strong>A frame pool house</strong> on {niceDate}.
+                        This action will create a reservation in <strong>A frame pool house</strong> on {niceDate}.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
+                <div className='flex flex-col items-center'>
+                    <SetGuests />
+                </div>
                 <AlertDialogFooter>
                     <AlertDialogCancel onClick={() => setOpen(false)}>Cancel</AlertDialogCancel>
                     <AlertDialogAction onClick={handleContinue}>Continue</AlertDialogAction>

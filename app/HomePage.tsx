@@ -7,6 +7,8 @@ import Parking from './ui/icons/Parking';
 import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerFooter, DrawerClose, DrawerDescription, DrawerTitle } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
 import { useEffect, useMemo } from 'react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import SetGuests from '@/components/SetGuests';
 
 const featuredAmenities = [
     {
@@ -98,6 +100,20 @@ export default function HomePage() {
                             <p className='text-gray-400 mr-2'>from</p>
                             <p className={`${inter.className} text-xl font-bold`}>€180</p>
                             <p className='text-gray-400'>/night</p>
+                            <Dialog>
+                                <DialogTrigger>
+                                    <p className='text-gray-400 ml-2'>(set guests)</p>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Set guests</DialogTitle>
+                                    </DialogHeader>
+                                    <DialogDescription>Who will be staying?</DialogDescription>
+                                    <div className='flex flex-col items-center'>
+                                        <SetGuests />
+                                    </div>
+                                </DialogContent>
+                            </Dialog>
                         </div>
                         <h1 className={`text-[31px] md:text-[48px] ${oranienbaum.className} self-start max-w-[768px]`}>Your go-to spot to relax, hang out, and unwind</h1>
                         <p className="text-gray-400 text-[12px] md:text-sm max-w-[768px] text-justify">The A-frame Pool House is a modern, beautiful getaway just 13 minutes from Novi Sad. It’s located 9 km from the city center, in Ledinci. The house features a large grassy yard, a playground for kids, over 15 outdoor seating spots, cozy garden furniture, sound system, internet, WiFi, Netflix, and HBO, plus a fully equipped kitchen.</p>
