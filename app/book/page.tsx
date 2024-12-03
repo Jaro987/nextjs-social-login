@@ -53,7 +53,7 @@ export default async function Page() {
         if (newEvent.success) {
             const invoiceData = new FormData();
             invoiceData.append('customerId', user?.id as string);
-            invoiceData.append('amount', '180'); // TODO: change to dynamic value from form on home page (configurator) or confirm-crete-event popup (add that UI)
+            invoiceData.append('amount', price.toString());
             invoiceData.append('status', 'pending');
             const newInvoice = await createInvoice({}, invoiceData);
             if (newInvoice.success) {
