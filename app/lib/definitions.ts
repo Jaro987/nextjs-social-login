@@ -56,6 +56,8 @@ export type InvoicesTable = {
   date: string;
   amount: number;
   status: 'pending' | 'paid';
+  event_status: EventStatus | null;
+  event_date: string | null;
 };
 
 export type CustomersTableType = {

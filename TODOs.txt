@@ -33,3 +33,4 @@ TODO
 7. add color change to profile page https://www.npmjs.com/package/react-colorful
 8. on create user, add user settings for that user at the same time ✓
 9. check user settings before sending email ✓
+10. take pending invoices only where event is not cancelled ✓

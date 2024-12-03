@@ -50,11 +50,12 @@ export default async function Page() {
         eventData.append('infants', infants.toString());
         eventData.append('price', price.toString());
         const newEvent = await createEvent(eventData);
-        if (newEvent.success) {
+        if (newEvent.success && newEvent.id) {
             const invoiceData = new FormData();
             invoiceData.append('customerId', user?.id as string);
             invoiceData.append('amount', price.toString());
             invoiceData.append('status', 'pending');
+            invoiceData.append('eventId', newEvent.id);
             const newInvoice = await createInvoice({}, invoiceData);
             if (newInvoice.success) {
                 return { success: true, message: 'Event and pending invoice created.' };

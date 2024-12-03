@@ -5,6 +5,7 @@ import {
   CustomerField,
   CustomersTableType,
   DBUserSettings,
+  EventStatus,
   InvoiceForm,
   InvoicesTable,
   LatestInvoiceRaw,
@@ -41,6 +42,8 @@ export async function fetchLatestInvoices() {
       SELECT invoices.amount, users.name, users.image_url, users.email, invoices.id
       FROM invoices
       JOIN users ON invoices.customer_id = users.id
+      JOIN calendar_events ON invoices.event_id = calendar_events.id
+      WHERE calendar_events.status = ${EventStatus.ACTIVE}
       ORDER BY invoices.date DESC
       LIMIT 5`;
 
@@ -63,9 +66,12 @@ export async function fetchCardData() {
     const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
     const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
     const invoiceStatusPromise = sql`SELECT
-         SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
-         SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
-         FROM invoices`;
+      SUM(CASE WHEN invoices.status = 'paid' THEN invoices.amount ELSE 0 END) AS "paid",
+      SUM(CASE WHEN invoices.status = 'pending' AND calendar_events.status = 'active' THEN invoices.amount ELSE 0 END) AS "pending"
+    FROM invoices
+    JOIN calendar_events ON invoices.event_id = calendar_events.id
+  `;
+
 
     const data = await Promise.all([
       invoiceCountPromise,
@@ -96,27 +102,32 @@ export async function fetchFilteredInvoices(
   currentPage: number,
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-  //TODO: switch to users instead of customers
   try {
     const invoices = await sql<InvoicesTable>`
       SELECT
-        invoices.id,
-        invoices.amount,
-        invoices.date,
-        invoices.status,
-        customers.name,
-        customers.email,
-        customers.image_url
+          invoices.id,
+          invoices.amount,
+          invoices.date,
+          invoices.status,
+          users.name,
+          users.email,
+          users.image_url,
+          calendar_events.status AS event_status,
+          calendar_events.date AS event_date
       FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
+      JOIN users ON invoices.customer_id = users.id
+      JOIN calendar_events ON invoices.event_id = calendar_events.id
       WHERE
-        customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`} OR
-        invoices.amount::text ILIKE ${`%${query}%`} OR
-        invoices.date::text ILIKE ${`%${query}%`} OR
-        invoices.status ILIKE ${`%${query}%`}
+          calendar_events.status = ${EventStatus.ACTIVE} AND
+          (
+              users.name ILIKE ${`%${query}%`} OR
+              users.email ILIKE ${`%${query}%`} OR
+              invoices.amount::text ILIKE ${`%${query}%`} OR
+              invoices.date::text ILIKE ${`%${query}%`} OR
+              invoices.status ILIKE ${`%${query}%`}
+          )
       ORDER BY invoices.date DESC
-      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset};
     `;
 
     return invoices.rows;

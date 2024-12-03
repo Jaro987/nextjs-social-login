@@ -44,7 +44,8 @@ export default async function InvoicesTable({
                     <p className="text-xl font-medium">
                       {formatCurrency(invoice.amount)}
                     </p>
-                    <p>{formatDateToLocal({ dateStr: invoice.date })}</p>
+                    <p>Created on: <strong>{formatDateToLocal({ dateStr: invoice.date })}</strong></p>
+                    <p>Reservation date: <strong>{formatDateToLocal({ dateStr: invoice.event_date })}</strong></p>
                   </div>
                   <div className="flex justify-end gap-2">
                     <UpdateInvoice id={invoice.id} />
@@ -67,7 +68,10 @@ export default async function InvoicesTable({
                   Amount
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Date
+                  Created on
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Reservation date
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Status
@@ -103,6 +107,9 @@ export default async function InvoicesTable({
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {formatDateToLocal({ dateStr: invoice.date })}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {formatDateToLocal({ dateStr: invoice.event_date })}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     <InvoiceStatus status={invoice.status} />

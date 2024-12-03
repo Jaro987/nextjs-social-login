@@ -247,3 +247,14 @@ export async function GET() {
 // ALTER TABLE calendar_events
 // RENAME COLUMN price_to_pay TO price;
 
+//add event_id as foreign key to invoices table
+// Step 1: Add the reservation_id column
+// ALTER TABLE invoices 
+// ADD COLUMN event_id UUID;
+
+// Step 2: Add the foreign key constraint
+// ALTER TABLE invoices 
+// ADD CONSTRAINT fk_calendar_events
+// FOREIGN KEY (event_id) 
+// REFERENCES calendar_events(id)
+// ON DELETE CASCADE;

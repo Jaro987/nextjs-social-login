@@ -45,6 +45,7 @@ const FormSchema = z.object({
         invalid_type_error: 'Please select an invoice status.',
     }),
     date: z.string(),
+    eventId: z.string().optional(),
 });
 
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
@@ -65,6 +66,7 @@ export async function createInvoice(prevState: State, formData: FormData) {
         customerId: formData.get('customerId'),
         amount: formData.get('amount'),
         status: formData.get('status'),
+        eventId: formData.get('eventId'),
     });
 
     if (!validatedFields.success) {
@@ -74,14 +76,14 @@ export async function createInvoice(prevState: State, formData: FormData) {
         };
     }
 
-    const { customerId, amount, status } = validatedFields.data;
+    const { customerId, amount, status, eventId } = validatedFields.data;
     const amountInCents = amount * 100;
     const date = new Date().toISOString().split('T')[0];
 
     try {
         await sql`
-        INSERT INTO invoices (customer_id, amount, status, date)
-        VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
+        INSERT INTO invoices (customer_id, amount, status, date, event_id)
+        VALUES (${customerId}, ${amountInCents}, ${status}, ${date}, ${eventId})
       `;
     } catch (error) {
         return {
@@ -321,6 +323,7 @@ export async function createEvent(formData: FormData) {
         response = await sql`
         INSERT INTO calendar_events (date, user_id, status, adults, children, infants, price)
         VALUES (${date}, ${user_id}, ${EventStatus.ACTIVE}, ${adults}, ${children}, ${infants}, ${price * 100})
+        RETURNING *
       `;
     } catch (error) {
         console.log({ error });
@@ -339,6 +342,7 @@ export async function createEvent(formData: FormData) {
     return {
         success: true,
         message: 'Successfully created event!',
+        id: response.rows[0].id,
     };
 
 }
