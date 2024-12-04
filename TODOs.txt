@@ -29,41 +29,40 @@ TODO
 3. Add guests configurator to confirm-create-event popup (add that UI) ✓
 4. Add guests configurator to Home page and persist data to confirm-create-event popup ✓
 5. Add more amenity icons :
-    -wifi
-    -pool
-    -hot tub
-    -parking
-    -grill
-    -Fire extinguisher
-    -tv
-    -aircon
-    -Indoor fireplace
-    -Ceiling fan
-    -Heating
-    -coffee machine
+    -wifi ✓
+    -pool ✓
+    -hot tub ✓
+    -parking ✓
+    -grill ✓
+    -Fire extinguisher ✓
+    -tv ✓
+    -aircon ✓
+    -Ceiling fan ✓
+    -Fireplace ✓
+    -coffee machine ✓
     -Hot water kettle
     -kids playground
     -baby crib
     -hair dryer
-    -washer
+    -washer ✓
     -TV with Disney+, premium cable, Netflix, HBO Max
-    -Sound system
-    -Game console: Xbox 360
+    -Sound system ✓
+    -Game console: Xbox 360 ✓
     -4 person
-    -1 bedroom
-    -1 bath
-    -mountain view
-    -city skyline view
-    -kitchen
-    -Cooking basics
-    -Dishes and silverware
-    -Refrigerator
-    -Freezer
-    -security cameras for yard
-    -outdoor shower
-    -Self check-in
-    -Lockbox
-    -Cleaning available during stay
+    -1 bedroom ✓
+    -1 bath ✓
+    -mountain view ✓
+    -city skyline view ✓
+    -kitchen ✓
+    -Cooking basics ✓
+    -Dishes and silverware ✓
+    -Refrigerator ✓
+    -Freezer ✓
+    -security cameras for yard ✓
+    -Outdoor shower ✓
+    -Self check-in ✓
+    -Lockbox ✓
+    -Cleaning available ✓
 6. add logger on BE
 7. add color change to profile page https://www.npmjs.com/package/react-colorful
 8. on create user, add user settings for that user at the same time ✓

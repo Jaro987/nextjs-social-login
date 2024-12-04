@@ -1,26 +1,25 @@
 'use client'
 
 import { inter, oranienbaum } from '@/app/ui/fonts';
-import Bed from './ui/icons/Bed';
 import More from './ui/icons/More';
-import Parking from './ui/icons/Parking';
-import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerFooter, DrawerClose, DrawerDescription, DrawerTitle } from '@/components/ui/drawer';
-import { Button } from '@/components/ui/button';
+import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerDescription, DrawerTitle } from '@/components/ui/drawer';
 import { useEffect, useMemo } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import SetGuests from '@/components/SetGuests';
+import { allAmenities, featuredAmenities } from './Amenities';
 
-const featuredAmenities = [
-    {
-        icon: <Bed />,
-        name: "Bed"
-    },
-    {
-        icon: <Parking />,
-        name: "Parking"
-    }
-
-]
+function makeAmenityIcon(amenity: { icon: React.ReactNode, name: string }) {
+    return (
+        <div key={amenity.name} className="flex flex-col items-center">
+            <div className="bg-transparent p-2 rounded-xl border-2">
+                {amenity.icon}
+            </div>
+            <div style={{ height: "calc(2 * 1.25rem)" }}>
+                <p className="text-gray-400 text-center">{amenity.name}</p>
+            </div>
+        </div>
+    )
+}
 
 export default function HomePage() {
 
@@ -28,14 +27,7 @@ export default function HomePage() {
         return (
             <>
                 {featuredAmenities.map((amenity) => {
-                    return (
-                        <div key={amenity.name} className="flex flex-col items-center">
-                            <div className="bg-transparent p-2 rounded-xl border-2">
-                                {amenity.icon}
-                            </div>
-                            <p className="text-gray-400 text-center">{amenity.name}</p>
-                        </div>
-                    )
+                    return makeAmenityIcon(amenity)
                 })}
                 <div className="flex flex-col items-center">
                     <div className="bg-transparent p-2 rounded-xl border-2 h-[44px]">
@@ -43,25 +35,26 @@ export default function HomePage() {
                             <DrawerTrigger>
                                 <More />
                             </DrawerTrigger>
-                            <DrawerContent>
-                                <div className="mx-auto w-full max-w-sm">
-                                    <DrawerHeader>
-                                        <DrawerTitle>Move Goal</DrawerTitle>
-                                        <DrawerDescription>Set your daily activity goal.</DrawerDescription>
+                            <DrawerContent className="bg-black/[0.6]">
+                                <div className="mx-auto w-full">
+                                    <DrawerHeader className='text-white'>
+                                        <DrawerTitle>Amenities</DrawerTitle>
+                                        <DrawerDescription>available at your stay</DrawerDescription>
                                     </DrawerHeader>
                                     <div className="p-4 pb-0">
-                                        <p>a lots of icons showing amenities</p>
+                                        <div className="grid grid-cols-3 md:grid-cols-8 xl:grid-cols-12 md:gap-4 mt-8 items-end">
+                                            {allAmenities.map((amenity) => {
+                                                return makeAmenityIcon(amenity)
+                                            })}
+                                        </div>
                                     </div>
-                                    <DrawerFooter>
-                                        <DrawerClose asChild>
-                                            <Button variant="outline">Close</Button>
-                                        </DrawerClose>
-                                    </DrawerFooter>
                                 </div>
                             </DrawerContent>
                         </Drawer>
                     </div>
-                    <p className="text-gray-400 text-center">more</p>
+                    <div style={{ height: "calc(2 * 1.25rem)" }}>
+                        <p className="text-gray-400 text-center">more</p>
+                    </div>
                 </div></>)
     }, [])
 
