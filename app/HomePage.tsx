@@ -35,7 +35,7 @@ export default function HomePage() {
                             <DrawerTrigger>
                                 <More />
                             </DrawerTrigger>
-                            <DrawerContent className="bg-black/[0.6]">
+                            <DrawerContent className="bg-black">
                                 <div className="mx-auto w-full">
                                     <DrawerHeader className='text-white'>
                                         <DrawerTitle>Amenities</DrawerTitle>
@@ -97,12 +97,12 @@ export default function HomePage() {
                                 <DialogTrigger>
                                     <p className='text-gray-400 ml-2'>(set guests)</p>
                                 </DialogTrigger>
-                                <DialogContent>
+                                <DialogContent className='bg-black'>
                                     <DialogHeader>
-                                        <DialogTitle>Set guests</DialogTitle>
+                                        <DialogTitle className='text-white'>Set guests</DialogTitle>
                                     </DialogHeader>
                                     <DialogDescription>Who will be staying?</DialogDescription>
-                                    <div className='flex flex-col items-center'>
+                                    <div className='flex flex-col items-center text-white gap-4'>
                                         <SetGuests />
                                     </div>
                                 </DialogContent>

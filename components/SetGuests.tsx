@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import InputWithLabel from "./InputWithLabel";
+import { usePathname, useRouter } from "next/navigation";
+import { Button } from "./ui/button";
 
 //TODO: add to tenant
 const minimumCost = 180;
@@ -11,6 +13,10 @@ export default function SetGuests() {
     const [children, setChildren] = useState<number>(() => parseInt(localStorage.getItem('children') || "0"));
     const [infants, setInfants] = useState<number>(() => parseInt(localStorage.getItem('infants') || "0"));
     const [total, setTotal] = useState<number>(0);
+
+    const router = useRouter();
+    const pathname = usePathname();
+
 
     useEffect(() => {
         localStorage.setItem('adults', adults.toString());
@@ -75,6 +81,7 @@ export default function SetGuests() {
             <div className="mt-4">
                 <p className="text-lg font-semibold">Total to Pay: ${total}</p>
             </div>
+            {pathname !== '/book' && <Button className="mt-4" variant='ghost' onClick={() => router.push("/book")}>Let me see available dates</Button>}
         </>
     );
 }

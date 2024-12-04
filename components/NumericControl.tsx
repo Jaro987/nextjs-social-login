@@ -13,9 +13,9 @@ export default function NumericControl({ value, onChange, disabledMore, disabled
 
     return (
         <div className="flex items-center space-x-4">
-            <Button variant="outline" disabled={disabledLess || value === 0} onClick={decrement}>-</Button>
+            <Button variant="outline" className="bg-transparent" disabled={disabledLess || value === 0} onClick={decrement}>-</Button>
             <span className={`text-2xl font-bold px-2 min-w-8 opacity-${disabledMore ? '50' : '0'}`}>{value}</span>
-            <Button variant="outline" disabled={disabledMore} onClick={increment}>+</Button>
+            <Button variant="outline" className="bg-transparent" disabled={disabledMore} onClick={increment}>+</Button>
         </div>
     );
 }

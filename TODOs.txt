@@ -14,6 +14,7 @@ TODO
         - revoke my event ✓
         - reminder for 7 days before event
         - reminder for one day before event
+        - change role
 
 2. Add settings page to Dashboard
     - tenant level: 
@@ -68,3 +69,4 @@ TODO
 8. on create user, add user settings for that user at the same time ✓
 9. check user settings before sending email ✓
 10. take pending invoices only where event is not cancelled ✓
+11. fix scroll on Dashboard/users
