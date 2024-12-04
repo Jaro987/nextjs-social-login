@@ -13,6 +13,7 @@ export const CreatedEventTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
 }) => (
     <BaseTemplate recipientName={recipientName}>
         <p>You just created a reservation for {formatDateToLocal({ dateStr: eventDate, withWeekday: true })}.</p>
+        <p>Check-in is between 2 PM and 6 PM, and checkout is by 10 AM tomorrow.</p>
     </BaseTemplate>
 );
 

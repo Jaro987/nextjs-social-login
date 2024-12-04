@@ -11,6 +11,7 @@ import {
   LatestInvoiceRaw,
   Revenue,
   User,
+  UserRole,
   UserSettings,
   // UserSettings,
 } from './definitions';
@@ -183,18 +184,19 @@ export async function fetchInvoiceById(id: string) {
   }
 }
 
-export async function fetchCustomers() {
+export async function fetchUsers() {
   try {
     const data = await sql<CustomerField>`
       SELECT
         id,
         name
-      FROM customers
+      FROM users
+      WHERE role = ${UserRole.USER}
       ORDER BY name ASC
     `;
 
-    const customers = data.rows;
-    return customers;
+    const users = data.rows;
+    return users;
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch all customers.');
