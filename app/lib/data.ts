@@ -348,6 +348,7 @@ export async function fetchAllUsersForAdmin() {
               WHERE c.event_id = e.id
             )
           )
+            ORDER BY e.date DESC
         ) FILTER (WHERE e.id IS NOT NULL), '[]'
       ) AS events
     FROM 
