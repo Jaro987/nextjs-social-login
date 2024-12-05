@@ -426,3 +426,64 @@ export async function getUserMailSettingsByEmail({ email }: { email: string }) {
     console.error('Database Error:', error);
   }
 }
+
+// Fetch users without events
+export async function fetchUsersWithoutEvents() {
+  try {
+    const users = await sql<Pick<CalendarUser, "id" | "name" | "email" | "image_url" | "color" | "role">>`SELECT 
+      u.id AS id,
+      u.name AS name,
+      u.email AS email,
+      u.image_url AS image_url,
+      u.color AS color,
+      u.role AS role
+    FROM 
+      Users u
+    WHERE 
+      u.role != ${UserRole.ADMIN}
+    ORDER BY 
+      u.id;`;
+
+    return users.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch users.');
+  }
+}
+
+// Fetch events for a specific user
+export async function fetchEventsForUser(userId: string) {
+  try {
+    const events = await sql<CalendarUser["events"]>`SELECT 
+  e.id AS event_id,
+  e.date AS date,
+  e.status AS status,
+  (
+    SELECT json_agg(
+      json_build_object(
+        'event_id', c.event_id,
+        'cancelled_at', c.cancelled_at,
+        'cancelled_by', cb.name,
+        'revoked_at', c.revoked_at,
+        'revoked_by', rb.name
+      )
+    )
+    FROM Cancellation c
+    LEFT JOIN Users cb ON c.cancelled_by = cb.id
+    LEFT JOIN Users rb ON c.revoked_by = rb.id
+    WHERE c.event_id = e.id
+  ) AS cancellations
+FROM 
+  Calendar_Events e
+WHERE 
+  e.user_id = ${userId}
+ORDER BY 
+  e.date DESC;`;
+
+
+    return events.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch events for user.');
+  }
+}
