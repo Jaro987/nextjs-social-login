@@ -355,6 +355,8 @@ export async function fetchAllUsersForAdmin() {
       Users u
     LEFT JOIN 
       Calendar_Events e ON u.id = e.user_id
+      WHERE 
+      u.role != ${UserRole.ADMIN}
     GROUP BY 
       u.id
     ORDER BY 

@@ -69,4 +69,4 @@ TODO
 8. on create user, add user settings for that user at the same time ✓
 9. check user settings before sending email ✓
 10. take pending invoices only where event is not cancelled ✓
-11. fix scroll on Dashboard/users
+11. fix scroll on Dashboard/users ✓

@@ -13,8 +13,6 @@ import { CalendarUser, UserRole } from "@/app/lib/definitions";
 import { Button } from "@/components/ui/button";
 
 export default function UsersOverview({ users }: { users?: CalendarUser[] }) {
-    console.log({ users });
-
     return (
         <div className="flex grow flex-col justify-between rounded-xl bg-black/[0.6] p-4">
             <div className="bg-white/[0.3] px-6">
@@ -42,7 +40,7 @@ export default function UsersOverview({ users }: { users?: CalendarUser[] }) {
                             </AccordionTrigger>
                             <AccordionContent>
                                 <div className="mt-2 flex gap-2 pl-14 pb-2">
-                                    <Button variant="outline" size="sm" className="bg-transparent">Edit</Button>
+                                    {/* <Button variant="outline" size="sm" className="bg-transparent">Edit</Button> */}
                                     <Button variant="outline" size="sm" className="bg-transparent">Send mail</Button>
                                     {user.role === UserRole.USER ?
                                         <Button variant="outline" size="sm" className="bg-transparent">Promote to host</Button>
