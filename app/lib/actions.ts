@@ -257,7 +257,7 @@ export async function updateUser(userEmail: string, updates: Record<string, unkn
     try {
         const r = await sql.query(query);
         if (r.rowCount > 0) {
-            revalidatePath('/dashboard/invoices');
+            revalidatePath('/dashboard/users');
             return {
                 success: true,
                 message: 'User Updated Successfully.',

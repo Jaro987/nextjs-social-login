@@ -154,10 +154,6 @@ export const featuredAmenities = [
         name: "WiFi"
     },
     {
-        icon: <TvIcon className='h-6 w-6' color='white' />,
-        name: "TV"
-    },
-    {
         icon: <Pool />,
         name: "Pool"
     },
@@ -166,23 +162,11 @@ export const featuredAmenities = [
         name: "Hot Tub"
     },
     {
-        icon: <AirCondition />,
-        name: "Air Condition"
-    },
-    {
-        icon: <GameConsole />,
-        name: "Xbox 360"
-    },
-    {
         icon: <MountainView />,
         name: "Mountain View"
     },
     {
         icon: <CityView />,
         name: "City View"
-    },
-    {
-        icon: <LockBox />,
-        name: "Lockbox"
     }
 ]

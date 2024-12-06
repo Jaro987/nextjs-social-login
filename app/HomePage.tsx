@@ -3,10 +3,11 @@
 import { inter, oranienbaum } from '@/app/ui/fonts';
 import More from './ui/icons/More';
 import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerDescription, DrawerTitle } from '@/components/ui/drawer';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import SetGuests from '@/components/SetGuests';
 import { allAmenities, featuredAmenities } from './Amenities';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 function makeAmenityIcon(amenity: { icon: React.ReactNode, name: string }) {
     return (
@@ -15,7 +16,7 @@ function makeAmenityIcon(amenity: { icon: React.ReactNode, name: string }) {
                 {amenity.icon}
             </div>
             <div style={{ height: "calc(2 * 1.25rem)" }}>
-                <p className="text-gray-400 text-center">{amenity.name}</p>
+                <p className="text-gray-400 text-sm md:text-base text-center">{amenity.name}</p>
             </div>
         </div>
     )
@@ -23,10 +24,24 @@ function makeAmenityIcon(amenity: { icon: React.ReactNode, name: string }) {
 
 export default function HomePage() {
 
+    const [visibleAmenities, setVisibleAmenities] = useState(featuredAmenities);
+
+    useEffect(() => {
+        const updateVisibleAmenities = () => {
+            const isWide = window.matchMedia("(min-width: 768px)").matches;
+            setVisibleAmenities(isWide ? featuredAmenities : featuredAmenities.slice(0, 5));
+        };
+
+        updateVisibleAmenities();
+        window.addEventListener("resize", updateVisibleAmenities);
+        return () => window.removeEventListener("resize", updateVisibleAmenities);
+    }, []);
+
+
     const amenitiesMemoized = useMemo(() => {
         return (
             <>
-                {featuredAmenities.map((amenity) => {
+                {visibleAmenities.map((amenity) => {
                     return makeAmenityIcon(amenity)
                 })}
                 <div className="flex flex-col items-center">
@@ -35,19 +50,19 @@ export default function HomePage() {
                             <DrawerTrigger>
                                 <More />
                             </DrawerTrigger>
-                            <DrawerContent className="bg-black">
+                            <DrawerContent className="bg-black max-h-screen">
                                 <div className="mx-auto w-full">
                                     <DrawerHeader className='text-white'>
                                         <DrawerTitle>Amenities</DrawerTitle>
                                         <DrawerDescription>available at your stay</DrawerDescription>
                                     </DrawerHeader>
-                                    <div className="p-4 pb-0">
+                                    <ScrollArea className="h-[60vh] px-4">
                                         <div className="grid grid-cols-3 md:grid-cols-8 xl:grid-cols-12 md:gap-4 mt-8 items-end">
                                             {allAmenities.map((amenity) => {
                                                 return makeAmenityIcon(amenity)
                                             })}
                                         </div>
-                                    </div>
+                                    </ScrollArea>
                                 </div>
                             </DrawerContent>
                         </Drawer>
@@ -56,7 +71,7 @@ export default function HomePage() {
                         <p className="text-gray-400 text-center">more</p>
                     </div>
                 </div></>)
-    }, [])
+    }, [visibleAmenities])
 
     useEffect(() => {
         const headerHeight = {
