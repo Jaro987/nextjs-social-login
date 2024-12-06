@@ -220,6 +220,7 @@ const UpdateUserSchema = z.object({
     name: z.string().optional(),
     image: z.string().optional(),
     phone: z.string().optional(),
+    role: z.enum([UserRole.HOST, UserRole.USER], { invalid_type_error: 'Invalid role.' }),
 });
 
 export async function updateUser(userEmail: string, updates: Record<string, unknown>) {
@@ -232,7 +233,7 @@ export async function updateUser(userEmail: string, updates: Record<string, unkn
         };
     }
 
-    const { name, image, phone } = validatedFields.data;
+    const { name, image, phone, role } = validatedFields.data;
 
     let query = 'UPDATE users SET ';
 
@@ -242,6 +243,7 @@ export async function updateUser(userEmail: string, updates: Record<string, unkn
     if (name !== undefined) fields.push(`name = '${name}'`);
     if (image !== undefined) fields.push(`image_url = '${image}'`);
     if (phone !== undefined) fields.push(`phone = '${phone}'`);
+    if (role !== undefined) fields.push(`role = '${role}'`);
 
     if (fields.length === 0) {
         return {
@@ -255,6 +257,7 @@ export async function updateUser(userEmail: string, updates: Record<string, unkn
     try {
         const r = await sql.query(query);
         if (r.rowCount > 0) {
+            revalidatePath('/dashboard/invoices');
             return {
                 success: true,
                 message: 'User Updated Successfully.',

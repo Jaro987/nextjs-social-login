@@ -9,12 +9,19 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { CalendarDays, XCircle, CheckCircle2, Search } from "lucide-react";
-import { CalendarEvent, CalendarUser, UserRole } from "@/app/lib/definitions";
+import { CalendarEvent, CalendarUser, User, UserRole } from "@/app/lib/definitions";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
-export default function UsersOverview({ users, getEvents }: { users?: Pick<CalendarUser, "id" | "name" | "email" | "image_url" | "color" | "role">[], getEvents: (userId: string) => Promise<CalendarEvent[][]> }) {
+type UsersOverviewProps = {
+    users?: Pick<CalendarUser, "id" | "name" | "email" | "image_url" | "color" | "role">[],
+    getEvents: (userId: string) => Promise<CalendarEvent[][]>,
+    changeRole: ({ user, changes }: { user: Partial<User>; changes: Record<string, string>; }) => Promise<{ success: boolean | undefined; message: string; description: string | undefined; }>
+}
+
+export default function UsersOverview({ users, getEvents, changeRole }: UsersOverviewProps) {
     const [userEvents, setUserEvents] = useState<Record<string, CalendarUser["events"]>>({});
     const [loadingUserId, setLoadingUserId] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState<string>("");
@@ -37,6 +44,19 @@ export default function UsersOverview({ users, getEvents }: { users?: Pick<Calen
         user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const handleChangeRole = async (user: Partial<User>, role: UserRole) => {
+        const response = await changeRole({ user, changes: { role } });
+        if (response.success) {
+            toast.success(response.message, {
+                description: response.description,
+            });
+        } else {
+            toast.error(response.message, {
+                description: response.description,
+            });
+        }
+    }
     return (
         <>
             <div className="relative">
@@ -83,9 +103,9 @@ export default function UsersOverview({ users, getEvents }: { users?: Pick<Calen
                                         {/* <Button variant="outline" size="sm" className="bg-transparent">Edit</Button> */}
                                         <Button variant="outline" size="sm" className="bg-transparent">Send mail</Button>
                                         {user.role === UserRole.USER ?
-                                            <Button variant="outline" size="sm" className="bg-transparent">Promote to host</Button>
+                                            <Button onClick={() => handleChangeRole(user, UserRole.HOST)} variant="outline" size="sm" className="bg-transparent">Promote to host</Button>
                                             :
-                                            <Button variant="outline" size="sm" className="bg-transparent">Demote to user</Button>}
+                                            <Button onClick={() => handleChangeRole(user, UserRole.USER)} variant="outline" size="sm" className="bg-transparent">Demote to user</Button>}
                                     </div>
                                     <div className="space-y-4 pl-14">
                                         {loadingUserId === user.id ? (
