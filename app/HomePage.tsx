@@ -103,7 +103,7 @@ export default function HomePage() {
 
     return (
         <main className={`flex flex-col justify-end p-6 text-white bg-gradient-to-t from-black via-transparent to-transparent`} id='js-main'>
-            <div className='flex flex-col md:flex-row gap-[40px]' id='description'>
+            <div className='flex flex-col md:flex-row gap-[40px] justify-center' id='description'>
                 <div>
                     <div className='flex flex-row items-end self-start'>
                         <p className='text-gray-400 mr-2'>from</p>
