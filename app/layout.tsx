@@ -27,15 +27,25 @@ export default async function RootLayout({
   }
   return (
     <AuthContext>
-      <html lang="en">
-        <body className={`${inter.className} antialiased bg-[url('/hero-image.jpg')] bg-cover bg-center bg-fixed backdrop-brightness-75`}>
-          <div className="flex flex-col items-center justify-between p-4 md:p-8">
-            <TopNav user={session?.user} onSignOut={onSignOut} />
-            <p className={`${oranienbaum.className} text-[56px] md:text-[72px] font-bold text-white text-center w-[320px] md:w-full`}>A frame pool house</p>
+      <html lang="en" className="h-full">
+        <body
+          className={`${inter.className} antialiased bg-[url('/hero-image.jpg')] bg-cover bg-center bg-fixed backdrop-brightness-75`}
+        >
+          <div className="flex flex-col h-full">
+            <header className="flex flex-col items-center justify-between p-4 md:p-8">
+              <TopNav user={session?.user} onSignOut={onSignOut} />
+              <p
+                className={`${oranienbaum.className} text-[56px] md:text-[72px] font-bold text-white text-center w-[320px] md:w-full`}
+              >
+                A frame pool house
+              </p>
+            </header>
+            <main className="flex-grow">
+              {children}
+            </main>
           </div>
-          {children}
+          <Toaster richColors closeButton />
         </body>
-        <Toaster richColors closeButton />
       </html>
     </AuthContext>
   );
