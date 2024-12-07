@@ -6,15 +6,16 @@ import "leaflet/dist/leaflet.css";
 import L, { icon } from "leaflet";
 
 import { MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
+import { mapTilerApiKey } from './consts';
 
 const Map = () => {
     const mapContainer = useRef<HTMLDivElement | null>(null);
     const map = useRef<L.Map | null>(null);
-    const center = { lat: 45.251087283215476, lng: 19.77080071231874 };
+    const center = { lat: 45.20607430978645, lng: 19.81065396745218 };
     const [zoom] = useState(15);
 
     useEffect(() => {
-        if (map.current) return; // stops map from intializing more than once
+        if (map.current) return;
         if (!mapContainer.current) {
             console.error('mapContainer is not initialized');
             return;
@@ -25,10 +26,8 @@ const Map = () => {
         }
         );
 
-        // Create a MapTiler Layer inside Leaflet
         const mtLayer = new MaptilerLayer({
-            // Get your free API key at https://cloud.maptiler.com
-            apiKey: "c3MXxkl0XvVEPjXDfnNI",
+            apiKey: mapTilerApiKey,
         });
         mtLayer.addTo(map.current);
         L.marker(L.latLng(center.lat, center.lng),
@@ -44,8 +43,8 @@ const Map = () => {
     }, [center.lng, center.lat, zoom]);
 
     return (
-        <div className={'relative w-[450px] h-[300px] xl:w-[600px] xl:h-[400px]'}>
-            <div ref={mapContainer} className={'absolute w-[450px] h-[300px] xl:w-[600px] xl:h-[400px]'} />
+        <div className={'relative w-[327px] sm:w-[600px] lg:w-[450px] h-[300px] xl:w-[600px] xl:h-[400px] place-self-center'}>
+            <div ref={mapContainer} className={'absolute w-[327px] sm:w-[600px] lg:w-[450px] h-[300px] xl:w-[600px] xl:h-[400px]'} />
         </div>
     )
 }
